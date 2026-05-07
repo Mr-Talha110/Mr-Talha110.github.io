@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Talha Latif — Mobile Engineer & Flutter Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #050510;
+      --surface: #0d0d1f;
+      --card: #0f0f22;
+      --card2: #13132a;
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(108,99,255,0.35);
+      --accent: #6c63ff;
+      --accent2: #00d4ff;
+      --accent3: #ff6b9d;
+      --text: #e8e8f0;
+      --muted: #7070a0;
+      --font-head: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); overflow-x: hidden; }
+
+    /* CANVAS */
+    #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 4rem;
+      background: rgba(5,5,16,0.7); backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-head); font-size: 1.25rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.88rem; font-weight: 500; letter-spacing: 0.02em; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-right { display: flex; gap: 0.8rem; align-items: center; }
+    .btn-primary { padding: 0.65rem 1.4rem; border-radius: 10px; background: linear-gradient(135deg, var(--accent), #8b83ff); color: #fff; font-weight: 600; font-size: 0.85rem; text-decoration: none; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(108,99,255,0.3); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(108,99,255,0.5); }
+    .btn-outline { padding: 0.65rem 1.4rem; border-radius: 10px; border: 1px solid var(--border); color: var(--text); font-weight: 500; font-size: 0.85rem; text-decoration: none; background: transparent; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+    .btn-outline:hover { border-color: var(--accent); background: rgba(108,99,255,0.07); }
+
+    /* SECTIONS */
+    section { position: relative; z-index: 1; }
+
+    /* HERO */
+    #hero { min-height: 100vh; display: flex; align-items: center; padding: 8rem 4rem 4rem; gap: 4rem; max-width: 1200px; margin: 0 auto; }
+    .hero-content { flex: 1; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem; border-radius: 100px; border: 1px solid rgba(0,212,255,0.35); background: rgba(0,212,255,0.07); font-size: 0.78rem; color: var(--accent2); font-weight: 600; margin-bottom: 1.5rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.4)} }
+    .hero-title { font-family: var(--font-head); font-size: clamp(2.6rem, 4.5vw, 4rem); font-weight: 700; line-height: 1.1; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
+    .hero-role { font-family: var(--font-head); font-size: clamp(1.2rem, 2vw, 1.6rem); font-weight: 500; margin-bottom: 1.2rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-sub { font-size: 1rem; color: var(--muted); line-height: 1.75; margin-bottom: 2.2rem; max-width: 500px; }
+    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .hero-visual { flex: 1; display: flex; justify-content: center; align-items: center; min-height: 480px; }
+    #phone-canvas { width: 320px; height: 480px; filter: drop-shadow(0 0 50px rgba(108,99,255,0.25)); }
+
+    /* STATS */
+    #stats { padding: 2.5rem 4rem; max-width: 1200px; margin: 0 auto; display: flex; gap: 1rem; flex-wrap: wrap; }
+    .stat-card { flex: 1; min-width: 160px; padding: 1.5rem 1.8rem; border-radius: 18px; background: var(--card); border: 1px solid var(--border); text-align: center; transition: transform 0.3s, border-color 0.3s; }
+    .stat-card:hover { transform: translateY(-3px); border-color: var(--border-hover); }
+    .stat-num { font-family: var(--font-head); font-size: 2.2rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat-label { color: var(--muted); font-size: 0.8rem; margin-top: 0.2rem; font-weight: 500; }
+
+    /* SECTION COMMON */
+    .section-wrap { padding: 6rem 4rem; max-width: 1200px; margin: 0 auto; }
+    .section-label { display: inline-block; color: var(--accent2); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.6rem; }
+    .section-title { font-family: var(--font-head); font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; line-height: 1.2; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+    .section-sub { color: var(--muted); font-size: 0.95rem; line-height: 1.7; max-width: 540px; }
+
+    /* ABOUT */
+    #about .inner { display: flex; gap: 5rem; align-items: center; }
+    .about-3d { flex: 0 0 280px; display: flex; justify-content: center; }
+    #cube-canvas { width: 280px; height: 280px; }
+    .about-text { flex: 1; }
+    .about-text p { color: var(--muted); line-height: 1.85; font-size: 0.97rem; margin-bottom: 0.9rem; }
+    .about-chips { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.2rem; }
+    .about-chip { padding: 0.3rem 0.9rem; border-radius: 100px; border: 1px solid var(--border); font-size: 0.78rem; font-weight: 500; color: var(--muted); }
+
+    /* SKILLS */
+    .skills-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; margin-top: 2.5rem; }
+    .skill-group { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 1.4rem 1.6rem; transition: border-color 0.25s, transform 0.25s; }
+    .skill-group:hover { border-color: var(--border-hover); transform: translateY(-3px); }
+    .skill-group-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .skill-group-label span { font-size: 1rem; }
+    .skill-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .skill-pill { padding: 0.28rem 0.75rem; border-radius: 100px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); font-size: 0.8rem; color: var(--text); font-weight: 500; }
+
+    /* EXPERIENCE */
+    .timeline { margin-top: 2.5rem; position: relative; padding-left: 2rem; }
+    .timeline::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent); border-radius: 2px; }
+    .timeline-item { position: relative; margin-bottom: 2.5rem; padding-left: 1.8rem; }
+    .timeline-item::before { content: ''; position: absolute; left: -2.3rem; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-shadow: 0 0 12px rgba(108,99,255,0.6); }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .tl-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+    .tl-role { font-family: var(--font-head); font-size: 1.1rem; font-weight: 600; }
+    .tl-period { font-size: 0.78rem; color: var(--accent2); font-weight: 600; letter-spacing: 0.05em; white-space: nowrap; background: rgba(0,212,255,0.08); padding: 0.2rem 0.8rem; border-radius: 100px; border: 1px solid rgba(0,212,255,0.2); }
+    .tl-company { font-size: 0.88rem; color: var(--accent); font-weight: 600; margin-bottom: 0.5rem; }
+    .tl-location { color: var(--muted); font-size: 0.78rem; margin-bottom: 0.7rem; }
+    .tl-desc { color: var(--muted); font-size: 0.88rem; line-height: 1.75; }
+    .tl-desc li { margin-bottom: 0.3rem; padding-left: 0.5rem; }
+    .tl-desc ul { list-style: none; }
+    .tl-desc ul li::before { content: '→'; color: var(--accent); margin-right: 0.5rem; font-size: 0.8rem; }
+
+    /* PROJECTS */
+    .filter-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 2rem 0 2rem; }
+    .filter-btn { padding: 0.45rem 1.1rem; border-radius: 100px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); }
+    .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.2rem; }
+    .project-card { border-radius: 20px; background: var(--card); border: 1px solid var(--border); overflow: hidden; transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; }
+    .project-card:hover { transform: translateY(-5px); border-color: var(--border-hover); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .project-card.hidden { display: none; }
+    .project-thumb { width: 100%; height: 160px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; position: relative; flex-shrink: 0; }
+    .project-body { padding: 1.3rem; flex: 1; display: flex; flex-direction: column; }
+    .project-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.7rem; }
+    .tag { padding: 0.18rem 0.6rem; border-radius: 100px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tag-flutter { background: rgba(108,99,255,0.15); color: #9d97ff; }
+    .tag-ios { background: rgba(0,212,255,0.12); color: var(--accent2); }
+    .tag-android { background: rgba(100,220,100,0.12); color: #6fdc6f; }
+    .tag-fintech { background: rgba(255,200,50,0.12); color: #ffc832; }
+    .tag-realestate { background: rgba(0,180,140,0.12); color: #00b48c; }
+    .tag-wellness { background: rgba(200,100,255,0.12); color: #c864ff; }
+    .tag-fitness { background: rgba(255,140,0,0.12); color: #ff8c00; }
+    .tag-social { background: rgba(255,107,157,0.12); color: var(--accent3); }
+    .tag-enterprise { background: rgba(255,220,100,0.12); color: #ffdc64; }
+    .tag-marketplace { background: rgba(255,100,100,0.12); color: #ff6464; }
+    .tag-health { background: rgba(100,200,255,0.12); color: #64c8ff; }
+    .project-name { font-family: var(--font-head); font-size: 1.05rem; font-weight: 600; margin-bottom: 0.45rem; }
+    .project-desc { color: var(--muted); font-size: 0.82rem; line-height: 1.6; margin-bottom: 1rem; flex: 1; }
+    .project-links { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-top: auto; }
+    .project-link { font-size: 0.75rem; font-weight: 600; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.25rem; padding: 0.3rem 0.75rem; border-radius: 8px; border: 1px solid rgba(108,99,255,0.25); transition: all 0.2s; }
+    .project-link:hover { background: rgba(108,99,255,0.1); border-color: var(--accent); color: #fff; }
+    .project-link.android { color: #6fdc6f; border-color: rgba(100,220,100,0.25); }
+    .project-link.android:hover { background: rgba(100,220,100,0.1); border-color: #6fdc6f; color: #fff; }
+    .project-link.upwork { color: #6fba6f; border-color: rgba(111,186,111,0.25); }
+    .project-link.upwork:hover { background: rgba(111,186,111,0.1); border-color: #6fba6f; color: #fff; }
+
+    /* CONTACT */
+    #contact .inner { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+    .contact-left .section-title { margin-bottom: 0.8rem; }
+    .contact-left p { color: var(--muted); line-height: 1.8; font-size: 0.97rem; margin-bottom: 1.5rem; }
+    .contact-links-grid { display: flex; flex-direction: column; gap: 0.8rem; }
+    .contact-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.3rem; border-radius: 14px; background: var(--card); border: 1px solid var(--border); text-decoration: none; color: var(--text); transition: border-color 0.2s, transform 0.2s; }
+    .contact-item:hover { border-color: var(--border-hover); transform: translateX(4px); }
+    .contact-item-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .contact-item-text { font-size: 0.88rem; }
+    .contact-item-label { font-weight: 600; font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .contact-item-value { font-weight: 500; margin-top: 0.1rem; }
+    .contact-right { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-card-big { padding: 2rem; border-radius: 20px; background: var(--card); border: 1px solid var(--border); position: relative; overflow: hidden; }
+    .contact-card-big::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(108,99,255,0.12) 0%, transparent 70%); pointer-events: none; }
+    .contact-card-big h3 { font-family: var(--font-head); font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .contact-card-big p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; margin-bottom: 1.2rem; }
+
+    /* FOOTER */
+    footer { text-align: center; padding: 2rem; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      #hero { flex-direction: column-reverse; padding: 7rem 1.5rem 3rem; gap: 2rem; }
+      .hero-visual { min-height: 280px; }
+      #phone-canvas { width: 200px; height: 320px; }
+      #stats, .section-wrap { padding: 3rem 1.5rem; }
+      #about .inner { flex-direction: column; gap: 2rem; }
+      .about-3d { flex: none; }
+      #contact .inner { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Talha Latif</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="https://www.upwork.com/freelancers/talhal4?mp_source=share" target="_blank" class="btn-outline">Upwork</a>
+    <a href="#contact" class="btn-primary">Hire Me</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero-wrap" style="position:relative;z-index:1;">
+  <div id="hero">
+    <div class="hero-content reveal">
+      <span class="hero-badge">Open to opportunities</span>
+      <h1 class="hero-title">Talha Latif</h1>
+      <div class="hero-role">Mobile Engineer · Flutter Developer</div>
+      <p class="hero-sub">
+        Innovative mobile engineer with 4+ years of experience delivering high-performance, scalable, user-centric apps. Specialized in fintech, real estate, wellness, and construction tech — from concept to App Store.
+      </p>
+      <div class="hero-ctas">
+        <a href="#projects" class="btn-primary">View My Work</a>
+        <a href="#contact" class="btn-outline">Get in Touch</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <canvas id="phone-canvas"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="stat-card reveal"><div class="stat-num">4+</div><div class="stat-label">Years Experience</div></div>
+  <div class="stat-card reveal" style="transition-delay:.08s"><div class="stat-num">13</div><div class="stat-label">Apps Shipped</div></div>
+  <div class="stat-card reveal" style="transition-delay:.16s"><div class="stat-num">iOS & Android</div><div class="stat-label">Cross-Platform</div></div>
+  <div class="stat-card reveal" style="transition-delay:.24s"><div class="stat-num">3</div><div class="stat-label">Companies</div></div>
+  <div class="stat-card reveal" style="transition-delay:.32s"><div class="stat-num">Web3</div><div class="stat-label">Blockchain & Crypto</div></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-wrap">
+    <div class="inner">
+      <div class="about-3d reveal"><canvas id="cube-canvas"></canvas></div>
+      <div class="about-text reveal" style="transition-delay:.15s">
+        <span class="section-label">About Me</span>
+        <h2 class="section-title">Building apps people can't put down</h2>
+        <p>I'm a Flutter specialist who has shipped 13 production apps across fintech, real estate, wellness, fitness, and enterprise verticals. I architect complete products from zero — handling everything from state management and offline sync to Web3 wallet integration and biometric security.</p>
+        <p>Currently serving as Lead Frontend Engineer at Dupely, where I oversee mobile and browser extension development, mentor developers, and drive engineering best practices. Previously built multi-chain crypto wallets, real estate legal platforms, and AI-powered construction documentation tools at Fantech Labs and Teglax.</p>
+        <p>I write clean, optimized, and secure code — and I care deeply about the details that make users actually enjoy an app.</p>
+        <div class="about-chips">
+          <span class="about-chip">BS Computer Science — 3.4 GPA</span>
+          <span class="about-chip">University of Okara</span>
+          <span class="about-chip">Okara, Pakistan</span>
+          <span class="about-chip">English (Professional)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-wrap">
+    <div class="reveal">
+      <span class="section-label">Expertise</span>
+      <h2 class="section-title">Skills & Technologies</h2>
+      <p class="section-sub">From Dart to blockchains — the full stack of a mobile engineer who ships.</p>
+    </div>
+    <div class="skills-groups">
+      <div class="skill-group reveal">
+        <div class="skill-group-label"><span>📱</span>Core Mobile</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Flutter & Dart (Expert)</span>
+          <span class="skill-pill">iOS (Swift)</span>
+          <span class="skill-pill">Android (Kotlin)</span>
+          <span class="skill-pill">Cross-Platform</span>
+        </div>
+      </div>
+      <div class="skill-group reveal" style="transition-delay:.06s">
+        <div class="skill-group-label"><span>⚙️</span>State Management</div>
+        <div class="skill-pills">
+          <span class="skill-pill">GetX</span>
+          <span class="skill-pill">Riverpod</span>
+          <span class="skill-pill">BLoC</span>
+          <span class="skill-pill">Provider</span>
+        </div>
+      </div>
+      <div class="skill-group reveal" style="transition-delay:.12s">
+        <div class="skill-group-label"><span>☁️</span>Backend & Cloud</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Firebase (Auth, Firestore, FCM)</span>
+          <span class="skill-pill">Supabase</span>
+          <span class="skill-pill">REST APIs</span>
+          <span class="skill-pill">GraphQL</span>
+          <span class="skill-pill">AWS S3 & CloudFront</span>
+        </div>
+      </div>
+      <div class="skill-group reveal" style="transition-delay:.18s">
+        <div class="skill-group-label"><span>🔗</span>Web3 & Blockchain</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Ethereum</span>
+          <span class="skill-pill">Polygon</span>
+          <span class="skill-pill">BNB Chain</span>
+          <span class="skill-pill">Uniswap SDK</span>
+          <span class="skill-pill">Smart Contract Integration</span>
+        </div>
+      </div>
+      <div class="skill-group reveal" style="transition-delay:.24s">
+        <div class="skill-group-label"><span>🔐</span>Security & Payments</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Biometric Auth</span>
+          <span class="skill-pill">Passkeys</span>
+          <span class="skill-pill">RBAC</span>
+          <span class="skill-pill">Moyasar</span>
+          <span class="skill-pill">Custom Gateways</span>
+          <span class="skill-pill">Subscription Systems</span>
+        </div>
+      </div>
+      <div class="skill-group reveal" style="transition-delay:.3s">
+        <div class="skill-group-label"><span>🚀</span>DevOps & Delivery</div>
+        <div class="skill-pills">
+          <span class="skill-pill">CI/CD Pipelines</span>
+          <span class="skill-pill">Git</span>
+          <span class="skill-pill">App Store Deployment</span>
+          <span class="skill-pill">Play Store Deployment</span>
+          <span class="skill-pill">Performance Optimization</span>
+        </div>
+      </div>
+      <div class="skill-group reveal" style="transition-delay:.36s">
+        <div class="skill-group-label"><span>⚡</span>Advanced Features</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Real-Time Chat</span>
+          <span class="skill-pill">Push Notifications</span>
+          <span class="skill-pill">Offline Sync</span>
+          <span class="skill-pill">Photo/Video Handling</span>
+          <span class="skill-pill">AI Integration</span>
+          <span class="skill-pill">Digital Signatures</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-wrap">
+    <div class="reveal">
+      <span class="section-label">Career</span>
+      <h2 class="section-title">Professional Experience</h2>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="tl-header">
+          <div class="tl-role">Lead Frontend Engineer</div>
+          <span class="tl-period">Feb 2026 – Present</span>
+        </div>
+        <div class="tl-company">Dupely</div>
+        <div class="tl-location">Remote</div>
+        <div class="tl-desc">
+          <ul>
+            <li>Leading frontend development across mobile apps and browser extensions, ensuring consistent UX across platforms</li>
+            <li>Designing, implementing, and reviewing production-level features hands-on</li>
+            <li>Leading QA processes, testing strategies, bug fixes, and performance optimizations</li>
+            <li>Mentoring developers and establishing coding standards, documentation, and best practices</li>
+            <li>Collaborating with backend engineers, PMs, and designers to ship robust features</li>
+          </ul>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="tl-header">
+          <div class="tl-role">Mobile Engineer (Flutter)</div>
+          <span class="tl-period">Sep 2023 – Mar 2026</span>
+        </div>
+        <div class="tl-company">Fantech Labs</div>
+        <div class="tl-location">On-site · Okara, Pakistan</div>
+        <div class="tl-desc">
+          <ul>
+            <li>Led mobile development across fintech, real estate, and wellness applications from architecture to deployment</li>
+            <li>Built EQ9 (multi-chain crypto wallet) and Home Appraised entirely from scratch to App Store</li>
+            <li>Specialized in complex state management, real-time systems, blockchain integration, and enterprise security</li>
+            <li>Built Legal Direct with bank-grade secure communication and ID verification systems</li>
+            <li>Delivered SpiritualYou, Rel8.app, FNMR, and Montage Doku with full offline-first architectures</li>
+          </ul>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="tl-header">
+          <div class="tl-role">Mobile Engineer (Flutter)</div>
+          <span class="tl-period">Dec 2021 – Sep 2023</span>
+        </div>
+        <div class="tl-company">Teglax</div>
+        <div class="tl-location">On-site · Okara, Pakistan</div>
+        <div class="tl-desc">
+          <ul>
+            <li>Delivered production Flutter apps across e-commerce, health, mental health, and enterprise systems</li>
+            <li>Built FixMix (home services marketplace) and Pet AI as lead developer from scratch to production</li>
+            <li>Integrated REST/GraphQL APIs for real-time data, payments, and operational workflows</li>
+            <li>Improved app reliability by debugging production issues and optimizing UI performance in live environments</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-wrap">
+    <div class="reveal">
+      <span class="section-label">Portfolio</span>
+      <h2 class="section-title">13 Apps Shipped to Production</h2>
+      <p class="section-sub">Real apps. Real users. Real stores.</p>
+    </div>
+
+    <div class="filter-bar reveal" style="transition-delay:.1s">
+      <button class="filter-btn active" data-filter="all">All (13)</button>
+      <button class="filter-btn" data-filter="fintech">Fintech</button>
+      <button class="filter-btn" data-filter="realestate">Real Estate</button>
+      <button class="filter-btn" data-filter="wellness">Wellness</button>
+      <button class="filter-btn" data-filter="fitness">Fitness</button>
+      <button class="filter-btn" data-filter="enterprise">Enterprise</button>
+      <button class="filter-btn" data-filter="social">Social</button>
+      <button class="filter-btn" data-filter="marketplace">Marketplace</button>
+      <button class="filter-btn" data-filter="health">Health</button>
+    </div>
+
+    <div class="projects-grid" id="projects-grid">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-wrap">
+    <div class="inner">
+      <div class="contact-left reveal">
+        <span class="section-label">Contact</span>
+        <h2 class="section-title">Let's build something great</h2>
+        <p>I'm open to freelance projects, full-time roles, and interesting collaborations. Whether you need a Flutter app from scratch or want to level up an existing one — let's talk.</p>
+        <div class="contact-links-grid">
+          <a href="mailto:talhalatif636@gmail.com" class="contact-item">
+            <span class="contact-item-icon">✉️</span>
+            <div class="contact-item-text">
+              <div class="contact-item-label">Email</div>
+              <div class="contact-item-value">talhalatif636@gmail.com</div>
+            </div>
+          </a>
+          <a href="https://www.linkedin.com/in/talha-latif/" target="_blank" class="contact-item">
+            <span class="contact-item-icon">💼</span>
+            <div class="contact-item-text">
+              <div class="contact-item-label">LinkedIn</div>
+              <div class="contact-item-value">linkedin.com/in/talha-latif</div>
+            </div>
+          </a>
+          <a href="https://github.com/mr-talha110" target="_blank" class="contact-item">
+            <span class="contact-item-icon">🐙</span>
+            <div class="contact-item-text">
+              <div class="contact-item-label">GitHub</div>
+              <div class="contact-item-value">mr-talha110</div>
+            </div>
+          </a>
+          <a href="https://www.upwork.com/freelancers/talhal4?mp_source=share" target="_blank" class="contact-item">
+            <span class="contact-item-icon">🟢</span>
+            <div class="contact-item-text">
+              <div class="contact-item-label">Upwork</div>
+              <div class="contact-item-value">upwork.com/freelancers/talhal4</div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="contact-right reveal" style="transition-delay:.15s">
+        <div class="contact-card-big">
+          <h3>Available for Freelance</h3>
+          <p>Need a Flutter app built the right way? I take on select freelance projects and deliver production-quality apps with clean architecture.</p>
+          <a href="https://www.upwork.com/freelancers/talhal4?mp_source=share" target="_blank" class="btn-primary" style="display:inline-block;">Hire on Upwork →</a>
+        </div>
+        <div class="contact-card-big">
+          <h3>Open to Full-Time Roles</h3>
+          <p>Looking for a Flutter expert who can own the mobile product? I bring 4+ years of shipping experience and a track record across multiple verticals.</p>
+          <a href="mailto:talhalatif636@gmail.com" class="btn-outline" style="display:inline-block;">Send me an Email →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 Talha Latif · Mobile Engineer & Flutter Developer · Built with Three.js</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ══════════════════════════════════════
+   PROJECT DATA
+══════════════════════════════════════ */
+const PROJECTS = [
+  {
+    name: 'EQ9',
+    icon: '💰',
+    gradient: 'linear-gradient(135deg,#0a1628,#1a3a5c)',
+    category: 'fintech',
+    tags: ['Flutter','iOS','Fintech','Web3'],
+    desc: 'Powerful multi-chain crypto wallet supporting Ethereum, BNB, and Polygon with real-time swaps, deposits/withdrawals, scheduled recurring transactions, and live market charts.',
+    ios: 'https://apps.apple.com/us/app/eq9/id6502989811',
+    upwork: 'https://www.upwork.com/freelancers/talhal4?p=1954293260117250048',
+  },
+  {
+    name: 'Dupely: Find It For Less',
+    icon: '🛍️',
+    gradient: 'linear-gradient(135deg,#1a0a0a,#3d1a00)',
+    category: 'fintech',
+    tags: ['Flutter','iOS','Android','Fintech'],
+    desc: 'Price comparison app that scans thousands of listings to find the same product for less. Compare prices, reviews, and seller reputation side-by-side across trusted sellers.',
+    ios: 'https://apps.apple.com/us/app/dupely-find-it-for-less/id6755406950',
+    android: 'https://play.google.com/store/apps/details?id=com.dupely.dupelyapp',
+  },
+  {
+    name: 'Home Appraised',
+    icon: '🏠',
+    gradient: 'linear-gradient(135deg,#0d1f0d,#0a3d2a)',
+    category: 'realestate',
+    tags: ['Flutter','iOS','Android','Real Estate'],
+    desc: 'Digital real estate appraisal platform for Ontario homeowners. Upload photos and receive certified professional valuation reports online — no in-person visits or appointments needed.',
+    ios: 'https://apps.apple.com/pk/app/home-appraised/id6742306213',
+    android: 'https://play.google.com/store/apps/details?id=com.fantech.homeappraised.ai&hl=en',
+    upwork: 'https://www.upwork.com/freelancers/talhal4?p=1935780953714380800',
+  },
+  {
+    name: 'Legal Direct',
+    icon: '⚖️',
+    gradient: 'linear-gradient(135deg,#0a0f1f,#1a2a4a)',
+    category: 'realestate',
+    tags: ['Flutter','iOS','Android','Real Estate'],
+    desc: 'Modern real estate legal platform for Ontario clients — refinancing, mortgages, buying, and selling. Secure ID verification, real-time milestone tracking, and secure document sharing.',
+    ios: 'https://apps.apple.com/us/app/legal-direct/id6479345754',
+    android: 'https://play.google.com/store/apps/details?id=com.legaldirect.app',
+  },
+  {
+    name: 'SpiritualYou',
+    icon: '🧘',
+    gradient: 'linear-gradient(135deg,#1a0a2e,#2e0a4a)',
+    category: 'wellness',
+    tags: ['Flutter','iOS','Android','Wellness'],
+    desc: 'Spiritual journey app with lucid dreaming, astral projection, meditation, and mindfulness. Features AI-powered insights, binaural beats, and comprehensive self-awareness articles.',
+    ios: 'https://apps.apple.com/pk/app/spiritualyou-meditate-awaken/id6504926797',
+    android: 'https://play.google.com/store/apps/details?id=com.fantech.spiritualyou&hl=en',
+  },
+  {
+    name: 'InsideOut Heal',
+    icon: '🌿',
+    gradient: 'linear-gradient(135deg,#0a1a14,#0a3028)',
+    category: 'wellness',
+    tags: ['Flutter','iOS','Wellness'],
+    desc: 'Wellness and relaxation app with guided visualization, breathing exercises, and mindfulness sessions. Short daily sessions combining voice guidance, sound design, and focused attention.',
+    ios: 'https://apps.apple.com/us/app/insideout-heal/id6755116411',
+  },
+  {
+    name: 'FNMR — Fitness App',
+    icon: '🏃',
+    gradient: 'linear-gradient(135deg,#1a0a00,#3d1800)',
+    category: 'fitness',
+    tags: ['Flutter','iOS','Android','Fitness'],
+    desc: 'All-in-one fitness and wellness app with step tracking, distance monitoring, calorie tracking, guided workout videos, daily goals, and progress insights — for beginners and enthusiasts alike.',
+    ios: 'https://apps.apple.com/pk/app/fnmr-fitness-app/id6757791347',
+    android: 'https://play.google.com/store/apps/details?id=com.fantech.fnmr',
+  },
+  {
+    name: 'Montage Doku',
+    icon: '🏗️',
+    gradient: 'linear-gradient(135deg,#1a1600,#2e2800)',
+    category: 'enterprise',
+    tags: ['Flutter','iOS','Android','Enterprise'],
+    desc: 'Smart construction site documentation — digital workflows from tool handover to customer approval via digital signature. Offline-first, AI assistance, GPS tracking, voice notes with transcription.',
+    ios: 'https://apps.apple.com/pk/app/montage-doku/id6747742870',
+    android: 'https://play.google.com/store/apps/details?id=com.fantech.montageDoku',
+    upwork: 'https://www.upwork.com/freelancers/talhal4?p=2030013563081064448',
+  },
+  {
+    name: 'FixMix',
+    icon: '🔧',
+    gradient: 'linear-gradient(135deg,#1a0800,#3d1200)',
+    category: 'marketplace',
+    tags: ['Flutter','iOS','Marketplace'],
+    desc: 'Saudi-based home services marketplace. Users post jobs, vendors bid, chat, and make secure payments. Real-time bidding system, integrated payments, and Moyasar gateway. Includes admin panel.',
+    ios: 'https://apps.apple.com/pk/app/fixmix/id6746330396',
+    upwork: 'https://www.upwork.com/freelancers/talhal4?p=1981055375514472448',
+  },
+  {
+    name: 'Rel8.app',
+    icon: '👨‍👩‍👧',
+    gradient: 'linear-gradient(135deg,#0a1a2e,#0a2a4a)',
+    category: 'social',
+    tags: ['Flutter','iOS','Android','Social'],
+    desc: 'Family and care community platform for sharing real-time photos, videos, and wellness updates. Event updates, video calling, direct messaging, and secure document uploads for caregiving.',
+    ios: 'https://apps.apple.com/pk/app/rel8-app/id1596771971',
+    android: 'https://play.google.com/store/apps/details?id=com.rel8.app',
+  },
+  {
+    name: 'The Pulse App',
+    icon: '📍',
+    gradient: 'linear-gradient(135deg,#0a001a,#1a0038)',
+    category: 'social',
+    tags: ['Flutter','iOS','Android','Social'],
+    desc: 'Cross-platform local discovery app — events, restaurants, bars, and attractions. Trending experiences, reviews, personalized recommendations based on mood and location.',
+    ios: 'https://apps.apple.com/us/app/the-pulse-app/id6751578945',
+    android: 'https://play.google.com/store/apps/details?id=com.thepulseapp.app&pcampaignid=web_share',
+    upwork: 'https://www.upwork.com/freelancers/talhal4?p=2011115130704056320',
+  },
+  {
+    name: 'Pet AI',
+    icon: '🐾',
+    gradient: 'linear-gradient(135deg,#001a1a,#003838)',
+    category: 'health',
+    tags: ['Flutter','iOS','Android','Health'],
+    desc: 'AI health assistant for dog owners. Daily health insights, personalized tips, emergency alerts, and AI-powered chat. Track illnesses, intolerances, and receive region-specific emergency notifications.',
+    ios: 'https://apps.apple.com/us/app/pet-ai/id6752663608',
+    android: 'https://play.google.com/store/apps/details?id=com.teglax.petai',
+    upwork: 'https://www.upwork.com/freelancers/talhal4?p=2030194664797896704',
+  },
+  {
+    name: 'Hero Pain Tracking',
+    icon: '💊',
+    gradient: 'linear-gradient(135deg,#001428,#002848)',
+    category: 'health',
+    tags: ['Flutter','iOS','Health'],
+    desc: 'Wellness tool for monitoring heart rate, pain severity, pain location, and facial images. Built to support recovery and wellness tracking after head injuries or falls.',
+    ios: 'https://apps.apple.com/pk/app/hero-pain-tracking-app/id6447765801',
+  },
+];
+
+const TAG_CLASS = {
+  'Flutter': 'tag-flutter', 'iOS': 'tag-ios', 'Android': 'tag-android',
+  'Fintech': 'tag-fintech', 'Web3': 'tag-fintech', 'Real Estate': 'tag-realestate',
+  'Wellness': 'tag-wellness', 'Fitness': 'tag-fitness', 'Social': 'tag-social',
+  'Enterprise': 'tag-enterprise', 'Marketplace': 'tag-marketplace', 'Health': 'tag-health',
+};
+
+function renderProjects() {
+  const grid = document.getElementById('projects-grid');
+  grid.innerHTML = PROJECTS.map(p => `
+    <div class="project-card reveal" data-category="${p.category}">
+      <div class="project-thumb" style="background:${p.gradient}">${p.icon}</div>
+      <div class="project-body">
+        <div class="project-tags">
+          ${p.tags.map(t => `<span class="tag ${TAG_CLASS[t]||''}">${t}</span>`).join('')}
+        </div>
+        <div class="project-name">${p.name}</div>
+        <p class="project-desc">${p.desc}</p>
+        <div class="project-links">
+          ${p.ios ? `<a href="${p.ios}" target="_blank" class="project-link">🍎 App Store</a>` : ''}
+          ${p.android ? `<a href="${p.android}" target="_blank" class="project-link android">▶ Play Store</a>` : ''}
+          ${p.upwork ? `<a href="${p.upwork}" target="_blank" class="project-link upwork">🟢 Case Study</a>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+  // re-observe after render
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+
+/* Filter logic */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const f = btn.dataset.filter;
+  document.querySelectorAll('.project-card').forEach(card => {
+    if (f === 'all' || card.dataset.category === f) card.classList.remove('hidden');
+    else card.classList.add('hidden');
+  });
+});
+
+/* ══════════════════════════════════════
+   SCROLL REVEAL OBSERVER
+══════════════════════════════════════ */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+renderProjects();
+
+/* ══════════════════════════════════════
+   BG PARTICLE FIELD
+══════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.z = 30;
+
+  const count = 2000;
+  const geo = new THREE.BufferGeometry();
+  const pos = new Float32Array(count * 3);
+  const col = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    pos[i*3]   = (Math.random() - 0.5) * 90;
+    pos[i*3+1] = (Math.random() - 0.5) * 90;
+    pos[i*3+2] = (Math.random() - 0.5) * 70;
+    const r = Math.random();
+    if (r < 0.33) { col[i*3]=0.42; col[i*3+1]=0.39; col[i*3+2]=1; }
+    else if (r < 0.66) { col[i*3]=0; col[i*3+1]=0.83; col[i*3+2]=1; }
+    else { col[i*3]=1; col[i*3+1]=0.42; col[i*3+2]=0.62; }
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const mat = new THREE.PointsMaterial({ size: 0.1, vertexColors: true, transparent: true, opacity: 0.55 });
+  const points = new THREE.Points(geo, mat);
+  scene.add(points);
+
+  let mx = 0, my = 0;
+  window.addEventListener('mousemove', e => { mx = (e.clientX/window.innerWidth-.5)*2; my = -(e.clientY/window.innerHeight-.5)*2; });
+  window.addEventListener('resize', () => { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+
+  let t = 0;
+  (function animate() {
+    requestAnimationFrame(animate); t += 0.002;
+    points.rotation.y = t*0.05 + mx*0.03;
+    points.rotation.x = t*0.02 + my*0.02;
+    renderer.render(scene, camera);
+  })();
+})();
+
+/* ══════════════════════════════════════
+   3D PHONE
+══════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('phone-canvas');
+  const W = canvas.offsetWidth || 320, H = canvas.offsetHeight || 480;
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(W, H);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40, W/H, 0.1, 100);
+  camera.position.z = 5;
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+  const key = new THREE.DirectionalLight(0x6c63ff, 2.5); key.position.set(3,3,3); scene.add(key);
+  const fill = new THREE.DirectionalLight(0x00d4ff, 1.2); fill.position.set(-3,-1,2); scene.add(fill);
+  const rim = new THREE.DirectionalLight(0xff6b9d, 0.8); rim.position.set(0,-4,-2); scene.add(rim);
+
+  const phoneMat = new THREE.MeshPhysicalMaterial({ color: 0x0a0a1e, metalness: 0.85, roughness: 0.08, reflectivity: 1, clearcoat: 1 });
+  const phone = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.4, 0.1), phoneMat);
+  scene.add(phone);
+
+  // Screen texture
+  const tc = document.createElement('canvas'); tc.width = 256; tc.height = 512;
+  const ctx = tc.getContext('2d');
+  const g = ctx.createLinearGradient(0,0,0,512);
+  g.addColorStop(0,'#0a0a24'); g.addColorStop(1,'#050516');
+  ctx.fillStyle = g; ctx.fillRect(0,0,256,512);
+  // Grid lines (UI skeleton)
+  ctx.strokeStyle = 'rgba(108,99,255,0.15)'; ctx.lineWidth = 1;
+  for (let i = 0; i < 8; i++) { ctx.beginPath(); ctx.moveTo(0,64+i*55); ctx.lineTo(256,64+i*55); ctx.stroke(); }
+  // App icon grid
+  const icons = ['💰','🏠','⚖️','🧘','🏃','🏗️','🔧','👨‍👩‍👧','📍','🐾','💊','🛍️','🌿'];
+  const colors2 = ['#6c63ff','#00d4ff','#00b48c','#c864ff','#ff8c00','#ffdc64','#ff6464','#ff6b9d','#6c63ff','#64c8ff','#00d4ff','#ffc832','#6fff6f'];
+  icons.forEach((ic, i) => {
+    const c = i % 3, r = Math.floor(i / 3);
+    const x = 20 + c * 75, y = 70 + r * 80;
+    ctx.fillStyle = colors2[i]+'22'; ctx.beginPath(); ctx.roundRect(x,y,55,55,14); ctx.fill();
+    ctx.font='24px serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(ic, x+27, y+28);
+  });
+  // Status bar
+  ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(0,0,256,28);
+  ctx.fillStyle = '#fff'; ctx.font = '11px sans-serif'; ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText('9:41',8,14);
+  ctx.textAlign='right'; ctx.fillText('●●● ▮',248,14);
+  // Accent glow
+  const gg = ctx.createRadialGradient(128,480,0,128,480,200);
+  gg.addColorStop(0,'rgba(108,99,255,0.25)'); gg.addColorStop(1,'transparent');
+  ctx.fillStyle = gg; ctx.fillRect(0,0,256,512);
+
+  const screenMat = new THREE.MeshPhysicalMaterial({ map: new THREE.CanvasTexture(tc), metalness: 0, roughness: 0.04, clearcoat: 1, emissive: new THREE.Color(0x08081e), emissiveIntensity: 0.5 });
+  const screen = new THREE.Mesh(new THREE.BoxGeometry(1.0, 2.0, 0.01), screenMat);
+  screen.position.z = 0.056; phone.add(screen);
+
+  // Camera bump
+  const cb = new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,0.035,32), new THREE.MeshPhysicalMaterial({color:0x111133,metalness:0.9,roughness:0.05}));
+  cb.rotation.x = Math.PI/2; cb.position.set(0.35,0.9,-0.07); phone.add(cb);
+
+  // Glow ring
+  const ring = new THREE.Mesh(new THREE.RingGeometry(1.3,1.52,64), new THREE.MeshBasicMaterial({color:0x6c63ff,side:THREE.DoubleSide,transparent:true,opacity:0.07}));
+  scene.add(ring);
+  const ring2 = new THREE.Mesh(new THREE.RingGeometry(1.6,1.78,64), new THREE.MeshBasicMaterial({color:0x00d4ff,side:THREE.DoubleSide,transparent:true,opacity:0.04}));
+  scene.add(ring2);
+
+  let tx = 0, ty = 0;
+  document.addEventListener('mousemove', e => { tx=(e.clientX/window.innerWidth-.5)*.7; ty=-(e.clientY/window.innerHeight-.5)*.7; });
+  let t = 0;
+  (function animate() {
+    requestAnimationFrame(animate); t += 0.01;
+    phone.rotation.y += (tx - phone.rotation.y) * 0.05;
+    phone.rotation.x += (ty - phone.rotation.x) * 0.05;
+    phone.position.y = Math.sin(t*.7)*.08;
+    ring.rotation.z = t*.25; ring2.rotation.z = -t*.18;
+    renderer.render(scene, camera);
+  })();
+})();
+
+/* ══════════════════════════════════════
+   3D ORB (About)
+══════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('cube-canvas');
+  const W = canvas.offsetWidth || 280, H = canvas.offsetHeight || 280;
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(W, H);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40, W/H, 0.1, 100);
+  camera.position.z = 5;
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+  const l1 = new THREE.DirectionalLight(0x6c63ff, 2.2); l1.position.set(2,2,2); scene.add(l1);
+  const l2 = new THREE.DirectionalLight(0x00d4ff, 1.6); l2.position.set(-2,-1,2); scene.add(l2);
+
+  const geo = new THREE.IcosahedronGeometry(1.3, 1);
+  const mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({color:0x6c63ff,metalness:0.5,roughness:0.15,transparent:true,opacity:0.12}));
+  scene.add(mesh);
+  const wire = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color:0x6c63ff,wireframe:true,transparent:true,opacity:0.45}));
+  scene.add(wire);
+
+  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.65,32,32), new THREE.MeshPhysicalMaterial({color:0x00d4ff,metalness:0.92,roughness:0.0,transparent:true,opacity:0.72,emissive:new THREE.Color(0x002d44),emissiveIntensity:0.6}));
+  scene.add(sphere);
+
+  [[Math.PI/2,0,0x6c63ff],[Math.PI/4,Math.PI/4,0x00d4ff],[-Math.PI/4,Math.PI/3,0xff6b9d]].forEach(([rx,ry,col])=>{
+    const r = new THREE.Mesh(new THREE.RingGeometry(1.55,1.6,64),new THREE.MeshBasicMaterial({color:col,side:THREE.DoubleSide,transparent:true,opacity:0.38}));
+    r.rotation.x=rx; r.rotation.y=ry; scene.add(r);
+    r._spd = (Math.random()-.5)*.015;
+    r._base = { rx, ry };
+  });
+
+  let t = 0;
+  (function animate() {
+    requestAnimationFrame(animate); t += 0.008;
+    mesh.rotation.x = t*.5; mesh.rotation.y = t*.7;
+    wire.rotation.x = t*.5; wire.rotation.y = t*.7;
+    sphere.rotation.y = t;
+    scene.children.filter(c=>c.geometry&&c.geometry.type==='RingGeometry').forEach((r,i)=>{
+      r.rotation.z = t * [.55,-.38,.28][i];
+    });
+    renderer.render(scene, camera);
+  })();
+})();
+</script>
+</body>
+</html>
