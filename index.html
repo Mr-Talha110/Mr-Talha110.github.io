@@ -7,188 +7,410 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --bg: #050510;
-      --surface: #0d0d1f;
-      --card: #0f0f22;
-      --card2: #13132a;
-      --border: rgba(255,255,255,0.07);
-      --border-hover: rgba(108,99,255,0.35);
-      --accent: #6c63ff;
-      --accent2: #00d4ff;
-      --accent3: #ff6b9d;
-      --text: #e8e8f0;
-      --muted: #7070a0;
-      --font-head: 'Space Grotesk', sans-serif;
-      --font-body: 'Inter', sans-serif;
-    }
-    html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); font-family: var(--font-body); overflow-x: hidden; }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --bg: #02020e;
+    --card: #0c0b1e;
+    --card2: #100f26;
+    --border: rgba(255,255,255,0.055);
+    --p: #7b2fff;
+    --p2: #9d6fff;
+    --c: #00e5ff;
+    --pk: #ff3d7f;
+    --g: #00e5a0;
+    --text: #f0eeff;
+    --muted: #6b6b9b;
+    --fh: 'Space Grotesk', sans-serif;
+    --fb: 'Inter', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--fb); overflow-x: hidden; cursor: none; }
 
-    /* CANVAS */
-    #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+  /* ── NOISE OVERLAY ── */
+  body::after {
+    content: ''; position: fixed; inset: 0; z-index: 999; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    opacity: .4;
+  }
 
-    /* NAV */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 1rem 4rem;
-      background: rgba(5,5,16,0.7); backdrop-filter: blur(24px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo { font-family: var(--font-head); font-size: 1.25rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.88rem; font-weight: 500; letter-spacing: 0.02em; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--text); }
-    .nav-right { display: flex; gap: 0.8rem; align-items: center; }
-    .btn-primary { padding: 0.65rem 1.4rem; border-radius: 10px; background: linear-gradient(135deg, var(--accent), #8b83ff); color: #fff; font-weight: 600; font-size: 0.85rem; text-decoration: none; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(108,99,255,0.3); }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(108,99,255,0.5); }
-    .btn-outline { padding: 0.65rem 1.4rem; border-radius: 10px; border: 1px solid var(--border); color: var(--text); font-weight: 500; font-size: 0.85rem; text-decoration: none; background: transparent; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
-    .btn-outline:hover { border-color: var(--accent); background: rgba(108,99,255,0.07); }
+  /* ── GRADIENT MESH ── */
+  .mesh {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at 15% 40%, rgba(123,47,255,.13) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 60% at 85% 20%, rgba(0,229,255,.09) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 40% at 70% 80%, rgba(255,61,127,.07) 0%, transparent 50%);
+    animation: meshDrift 12s ease-in-out infinite alternate;
+  }
+  @keyframes meshDrift {
+    0%   { transform: scale(1) translate(0,0); }
+    100% { transform: scale(1.06) translate(-1%,1.5%); }
+  }
 
-    /* SECTIONS */
-    section { position: relative; z-index: 1; }
+  /* ── PRELOADER ── */
+  #preloader {
+    position: fixed; inset: 0; z-index: 9000; background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.6rem;
+    transition: opacity .7s ease, visibility .7s ease;
+  }
+  #preloader.done { opacity: 0; visibility: hidden; }
 
-    /* HERO */
-    #hero { min-height: 100vh; display: flex; align-items: center; padding: 8rem 4rem 4rem; gap: 4rem; max-width: 1200px; margin: 0 auto; }
-    .hero-content { flex: 1; }
-    .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem; border-radius: 100px; border: 1px solid rgba(0,212,255,0.35); background: rgba(0,212,255,0.07); font-size: 0.78rem; color: var(--accent2); font-weight: 600; margin-bottom: 1.5rem; letter-spacing: 0.06em; text-transform: uppercase; }
-    .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.4)} }
-    .hero-title { font-family: var(--font-head); font-size: clamp(2.6rem, 4.5vw, 4rem); font-weight: 700; line-height: 1.1; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
-    .hero-role { font-family: var(--font-head); font-size: clamp(1.2rem, 2vw, 1.6rem); font-weight: 500; margin-bottom: 1.2rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero-sub { font-size: 1rem; color: var(--muted); line-height: 1.75; margin-bottom: 2.2rem; max-width: 500px; }
-    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .hero-visual { flex: 1; display: flex; justify-content: center; align-items: center; min-height: 480px; }
-    #phone-canvas { width: 320px; height: 480px; filter: drop-shadow(0 0 50px rgba(108,99,255,0.25)); }
+  /* Phone shell */
+  .boot-phone {
+    width: 110px; height: 220px;
+    border-radius: 26px;
+    border: 2px solid transparent;
+    background: linear-gradient(#07061a,#07061a) padding-box,
+                linear-gradient(160deg,#7b2fff,#00e5ff,#ff3d7f) border-box;
+    position: relative; overflow: hidden;
+    opacity: 0; transform: scale(.7) translateY(20px);
+    animation: phoneIn .55s cubic-bezier(.34,1.56,.64,1) .1s forwards;
+    box-shadow: 0 0 40px rgba(123,47,255,.25), 0 0 80px rgba(0,229,255,.1);
+  }
+  @keyframes phoneIn { to { opacity:1; transform:scale(1) translateY(0); } }
 
-    /* STATS */
-    #stats { padding: 2.5rem 4rem; max-width: 1200px; margin: 0 auto; display: flex; gap: 1rem; flex-wrap: wrap; }
-    .stat-card { flex: 1; min-width: 160px; padding: 1.5rem 1.8rem; border-radius: 18px; background: var(--card); border: 1px solid var(--border); text-align: center; transition: transform 0.3s, border-color 0.3s; }
-    .stat-card:hover { transform: translateY(-3px); border-color: var(--border-hover); }
-    .stat-num { font-family: var(--font-head); font-size: 2.2rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .stat-label { color: var(--muted); font-size: 0.8rem; margin-top: 0.2rem; font-weight: 500; }
+  /* Dynamic island / notch */
+  .boot-notch {
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    width: 48px; height: 10px; border-radius: 10px;
+    background: #02020e;
+    z-index: 2;
+    opacity: 0; animation: fadeIn .3s ease .65s forwards;
+  }
+  /* Camera dot inside island */
+  .boot-notch::after { content:''; position:absolute; right:6px; top:50%; transform:translateY(-50%); width:5px; height:5px; border-radius:50%; background:rgba(0,229,255,.5); }
 
-    /* SECTION COMMON */
-    .section-wrap { padding: 6rem 4rem; max-width: 1200px; margin: 0 auto; }
-    .section-label { display: inline-block; color: var(--accent2); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.6rem; }
-    .section-title { font-family: var(--font-head); font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; line-height: 1.2; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
-    .section-sub { color: var(--muted); font-size: 0.95rem; line-height: 1.7; max-width: 540px; }
+  /* Screen */
+  .boot-screen {
+    position: absolute; inset: 4px; border-radius: 22px;
+    background: #04031a; overflow: hidden;
+    opacity: 0; animation: screenFlicker .5s ease .7s forwards;
+  }
+  @keyframes screenFlicker {
+    0%{opacity:0} 20%{opacity:.9} 35%{opacity:.2} 55%{opacity:.95} 70%{opacity:.4} 100%{opacity:1}
+  }
 
-    /* ABOUT */
-    #about .inner { display: flex; gap: 5rem; align-items: center; }
-    .about-3d { flex: 0 0 280px; display: flex; justify-content: center; }
-    #cube-canvas { width: 280px; height: 280px; }
-    .about-text { flex: 1; }
-    .about-text p { color: var(--muted); line-height: 1.85; font-size: 0.97rem; margin-bottom: 0.9rem; }
-    .about-chips { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.2rem; }
-    .about-chip { padding: 0.3rem 0.9rem; border-radius: 100px; border: 1px solid var(--border); font-size: 0.78rem; font-weight: 500; color: var(--muted); }
+  /* Screen glow */
+  .boot-screen::before {
+    content: ''; position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+    width: 80px; height: 80px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(123,47,255,.3), transparent 70%);
+    animation: glowPulse 2s ease infinite; opacity: 0;
+    animation-delay: 1.2s;
+  }
+  @keyframes glowPulse { 0%,100%{transform:translateX(-50%) scale(1);opacity:.7} 50%{transform:translateX(-50%) scale(1.4);opacity:.3} }
 
-    /* SKILLS */
-    .skills-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; margin-top: 2.5rem; }
-    .skill-group { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 1.4rem 1.6rem; transition: border-color 0.25s, transform 0.25s; }
-    .skill-group:hover { border-color: var(--border-hover); transform: translateY(-3px); }
-    .skill-group-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
-    .skill-group-label span { font-size: 1rem; }
-    .skill-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-    .skill-pill { padding: 0.28rem 0.75rem; border-radius: 100px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); font-size: 0.8rem; color: var(--text); font-weight: 500; }
+  /* Screen content */
+  .boot-content {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 4px;
+    padding-top: 14px;
+    opacity: 0; animation: fadeIn .4s ease 1.1s forwards;
+  }
+  .boot-logo-icon { font-size: 2.2rem; animation: iconBounce .6s cubic-bezier(.34,1.56,.64,1) 1.2s both; }
+  @keyframes iconBounce { 0%{transform:scale(0)} 100%{transform:scale(1)} }
+  .boot-name-text {
+    font-family: var(--fh); font-size: .85rem; font-weight: 700; color: #f0eeff;
+    letter-spacing: -.01em;
+    opacity: 0; animation: fadeInUp .4s ease 1.5s forwards;
+  }
+  .boot-role-text {
+    font-size: .48rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--c); opacity: 0; animation: fadeInUp .4s ease 1.7s forwards;
+  }
+  @keyframes fadeInUp { 0%{opacity:0;transform:translateY(6px)} 100%{opacity:1;transform:none} }
 
-    /* EXPERIENCE */
-    .timeline { margin-top: 2.5rem; position: relative; padding-left: 2rem; }
-    .timeline::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent); border-radius: 2px; }
-    .timeline-item { position: relative; margin-bottom: 2.5rem; padding-left: 1.8rem; }
-    .timeline-item::before { content: ''; position: absolute; left: -2.3rem; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-shadow: 0 0 12px rgba(108,99,255,0.6); }
-    .timeline-item:last-child { margin-bottom: 0; }
-    .tl-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
-    .tl-role { font-family: var(--font-head); font-size: 1.1rem; font-weight: 600; }
-    .tl-period { font-size: 0.78rem; color: var(--accent2); font-weight: 600; letter-spacing: 0.05em; white-space: nowrap; background: rgba(0,212,255,0.08); padding: 0.2rem 0.8rem; border-radius: 100px; border: 1px solid rgba(0,212,255,0.2); }
-    .tl-company { font-size: 0.88rem; color: var(--accent); font-weight: 600; margin-bottom: 0.5rem; }
-    .tl-location { color: var(--muted); font-size: 0.78rem; margin-bottom: 0.7rem; }
-    .tl-desc { color: var(--muted); font-size: 0.88rem; line-height: 1.75; }
-    .tl-desc li { margin-bottom: 0.3rem; padding-left: 0.5rem; }
-    .tl-desc ul { list-style: none; }
-    .tl-desc ul li::before { content: '→'; color: var(--accent); margin-right: 0.5rem; font-size: 0.8rem; }
+  /* Progress bar inside phone */
+  .boot-bar-wrap {
+    margin-top: 10px; width: 60px; height: 2px; border-radius: 2px;
+    background: rgba(255,255,255,.08); overflow: hidden;
+    opacity: 0; animation: fadeIn .3s ease 1.9s forwards;
+  }
+  .boot-bar-fill {
+    height: 100%; width: 0; border-radius: 2px;
+    background: linear-gradient(90deg, var(--p), var(--c));
+    animation: bootFill .9s cubic-bezier(.4,0,.2,1) 2s forwards;
+  }
+  @keyframes bootFill { to { width: 60px; } }
 
-    /* PROJECTS */
-    .filter-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 2rem 0 2rem; }
-    .filter-btn { padding: 0.45rem 1.1rem; border-radius: 100px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); }
-    .filter-btn:hover { border-color: var(--accent); color: var(--text); }
-    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.2rem; }
-    .project-card { border-radius: 20px; background: var(--card); border: 1px solid var(--border); overflow: hidden; transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; }
-    .project-card:hover { transform: translateY(-5px); border-color: var(--border-hover); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
-    .project-card.hidden { display: none; }
-    .project-thumb { width: 100%; height: 160px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; position: relative; flex-shrink: 0; }
-    .project-body { padding: 1.3rem; flex: 1; display: flex; flex-direction: column; }
-    .project-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.7rem; }
-    .tag { padding: 0.18rem 0.6rem; border-radius: 100px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
-    .tag-flutter { background: rgba(108,99,255,0.15); color: #9d97ff; }
-    .tag-ios { background: rgba(0,212,255,0.12); color: var(--accent2); }
-    .tag-android { background: rgba(100,220,100,0.12); color: #6fdc6f; }
-    .tag-fintech { background: rgba(255,200,50,0.12); color: #ffc832; }
-    .tag-realestate { background: rgba(0,180,140,0.12); color: #00b48c; }
-    .tag-wellness { background: rgba(200,100,255,0.12); color: #c864ff; }
-    .tag-fitness { background: rgba(255,140,0,0.12); color: #ff8c00; }
-    .tag-social { background: rgba(255,107,157,0.12); color: var(--accent3); }
-    .tag-enterprise { background: rgba(255,220,100,0.12); color: #ffdc64; }
-    .tag-marketplace { background: rgba(255,100,100,0.12); color: #ff6464; }
-    .tag-health { background: rgba(100,200,255,0.12); color: #64c8ff; }
-    .project-name { font-family: var(--font-head); font-size: 1.05rem; font-weight: 600; margin-bottom: 0.45rem; }
-    .project-desc { color: var(--muted); font-size: 0.82rem; line-height: 1.6; margin-bottom: 1rem; flex: 1; }
-    .project-links { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-top: auto; }
-    .project-link { font-size: 0.75rem; font-weight: 600; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.25rem; padding: 0.3rem 0.75rem; border-radius: 8px; border: 1px solid rgba(108,99,255,0.25); transition: all 0.2s; }
-    .project-link:hover { background: rgba(108,99,255,0.1); border-color: var(--accent); color: #fff; }
-    .project-link.android { color: #6fdc6f; border-color: rgba(100,220,100,0.25); }
-    .project-link.android:hover { background: rgba(100,220,100,0.1); border-color: #6fdc6f; color: #fff; }
-    .project-link.upwork { color: #6fba6f; border-color: rgba(111,186,111,0.25); }
-    .project-link.upwork:hover { background: rgba(111,186,111,0.1); border-color: #6fba6f; color: #fff; }
+  /* Home indicator */
+  .boot-home {
+    position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+    width: 38px; height: 3px; border-radius: 2px;
+    background: rgba(255,255,255,.2);
+    opacity: 0; animation: fadeIn .3s ease .8s forwards;
+  }
 
-    /* CONTACT */
-    #contact .inner { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
-    .contact-left .section-title { margin-bottom: 0.8rem; }
-    .contact-left p { color: var(--muted); line-height: 1.8; font-size: 0.97rem; margin-bottom: 1.5rem; }
-    .contact-links-grid { display: flex; flex-direction: column; gap: 0.8rem; }
-    .contact-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.3rem; border-radius: 14px; background: var(--card); border: 1px solid var(--border); text-decoration: none; color: var(--text); transition: border-color 0.2s, transform 0.2s; }
-    .contact-item:hover { border-color: var(--border-hover); transform: translateX(4px); }
-    .contact-item-icon { font-size: 1.3rem; flex-shrink: 0; }
-    .contact-item-text { font-size: 0.88rem; }
-    .contact-item-label { font-weight: 600; font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-    .contact-item-value { font-weight: 500; margin-top: 0.1rem; }
-    .contact-right { display: flex; flex-direction: column; gap: 1rem; }
-    .contact-card-big { padding: 2rem; border-radius: 20px; background: var(--card); border: 1px solid var(--border); position: relative; overflow: hidden; }
-    .contact-card-big::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(108,99,255,0.12) 0%, transparent 70%); pointer-events: none; }
-    .contact-card-big h3 { font-family: var(--font-head); font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
-    .contact-card-big p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; margin-bottom: 1.2rem; }
+  /* Side buttons */
+  .boot-btn-r { position:absolute; right:-2px; top:55px; width:2px; height:30px; border-radius:2px 0 0 2px; background:rgba(123,47,255,.5); }
+  .boot-btn-l1 { position:absolute; left:-2px; top:42px; width:2px; height:20px; border-radius:0 2px 2px 0; background:rgba(0,229,255,.4); }
+  .boot-btn-l2 { position:absolute; left:-2px; top:68px; width:2px; height:20px; border-radius:0 2px 2px 0; background:rgba(0,229,255,.4); }
 
-    /* FOOTER */
-    footer { text-align: center; padding: 2rem; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+  /* Status text */
+  .boot-status {
+    font-size: .72rem; font-weight: 500; color: var(--muted); letter-spacing: .1em; text-transform: uppercase;
+    opacity: 0; animation: fadeIn .4s ease 1.2s forwards;
+    min-height: 1rem;
+  }
+  @keyframes fadeIn { to { opacity: 1; } }
 
-    /* REVEAL */
-    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.65s ease, transform 0.65s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+  /* ── CURSOR ── */
+  #cursor { position: fixed; width: 10px; height: 10px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 8999; transform: translate(-50%,-50%); transition: transform .08s, background .2s; mix-blend-mode: difference; }
+  #cursor-ring { position: fixed; width: 38px; height: 38px; border: 1.5px solid rgba(123,47,255,.6); border-radius: 50%; pointer-events: none; z-index: 8998; transform: translate(-50%,-50%); transition: transform .18s cubic-bezier(.2,1,.3,1), width .2s, height .2s, opacity .2s; }
+  body:has(a:hover) #cursor-ring, body:has(button:hover) #cursor-ring { width: 56px; height: 56px; opacity: .7; }
 
-    /* RESPONSIVE */
-    @media (max-width: 900px) {
-      nav { padding: 1rem 1.5rem; }
-      .nav-links { display: none; }
-      #hero { flex-direction: column-reverse; padding: 7rem 1.5rem 3rem; gap: 2rem; }
-      .hero-visual { min-height: 280px; }
-      #phone-canvas { width: 200px; height: 320px; }
-      #stats, .section-wrap { padding: 3rem 1.5rem; }
-      #about .inner { flex-direction: column; gap: 2rem; }
-      .about-3d { flex: none; }
-      #contact .inner { grid-template-columns: 1fr; }
-    }
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.1rem 4rem;
+    background: rgba(2,2,14,.65); backdrop-filter: blur(28px) saturate(1.8);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { font-family: var(--fh); font-weight: 700; font-size: 1.2rem; background: linear-gradient(135deg,var(--p),var(--c)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: .85rem; font-weight: 500; letter-spacing: .02em; transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-right { display: flex; gap: .7rem; }
+  .btn { display: inline-flex; align-items: center; gap: .4rem; padding: .6rem 1.4rem; border-radius: 10px; font-size: .83rem; font-weight: 600; text-decoration: none; cursor: pointer; font-family: var(--fb); transition: transform .2s, box-shadow .2s; }
+  .btn-ghost { border: 1px solid var(--border); color: var(--text); background: transparent; }
+  .btn-ghost:hover { border-color: rgba(123,47,255,.5); background: rgba(123,47,255,.07); }
+  .btn-fill { background: linear-gradient(135deg, var(--p), #a259ff); color: #fff; border: none; box-shadow: 0 4px 22px rgba(123,47,255,.35); }
+  .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(123,47,255,.55); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 4.5rem;
+    z-index: 1;
+    overflow: hidden;
+  }
+  /* Text floats above the canvas */
+  .hero-left {
+    position: relative;
+    z-index: 2;
+    max-width: 560px;
+    padding-top: 5.5rem;
+  }
+  /* Canvas container is full-bleed behind everything */
+  .hero-right {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+  #hero-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .35rem 1rem; border-radius: 100px; margin-bottom: 1.6rem;
+    border: 1px solid rgba(0,229,255,.25); background: rgba(0,229,255,.06);
+    font-size: .72rem; font-weight: 700; color: var(--c); letter-spacing: .1em; text-transform: uppercase;
+  }
+  .hero-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--c); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(1.5)} }
+  .hero-name { font-family: var(--fh); font-size: clamp(3rem,5vw,5rem); font-weight: 700; line-height: 1.0; letter-spacing: -.03em; margin-bottom: .5rem; }
+  .hero-role {
+    font-family: var(--fh); font-size: clamp(1.1rem,1.8vw,1.5rem); font-weight: 500; margin-bottom: 1.4rem;
+    background: linear-gradient(90deg,var(--p),var(--c),var(--pk)); background-size: 200% auto;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: gradShift 4s linear infinite;
+  }
+  @keyframes gradShift { 0%{background-position:0% center} 100%{background-position:200% center} }
+  .hero-sub { color: var(--muted); font-size: .97rem; line-height: 1.8; max-width: 440px; margin-bottom: 2.2rem; }
+  .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+  /* (duplicate removed — see .hero-right above) */
+
+  /* ── MARQUEE ── */
+  .marquee-section { position: relative; z-index: 1; overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: rgba(12,11,30,.5); padding: .85rem 0; }
+  .marquee-track { display: flex; gap: 0; white-space: nowrap; animation: marquee 30s linear infinite; }
+  .marquee-track span { display: inline-flex; align-items: center; gap: 2rem; padding: 0 2rem; font-size: .78rem; font-weight: 600; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+  .marquee-track span::after { content: '◆'; font-size: .5rem; color: var(--p); }
+  @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+  /* ── STATS ── */
+  #stats { position: relative; z-index: 1; padding: 4rem; }
+  .stats-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; max-width: 1100px; margin: 0 auto; }
+  .stat-item {
+    background: var(--card); padding: 2rem 1.5rem; text-align: center;
+    position: relative; overflow: hidden; transition: background .3s;
+  }
+  .stat-item::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center bottom, rgba(123,47,255,.12), transparent 70%); opacity: 0; transition: opacity .3s; }
+  .stat-item:hover::before { opacity: 1; }
+  .stat-item:hover { background: var(--card2); }
+  .stat-n { font-family: var(--fh); font-size: 2.4rem; font-weight: 700; background: linear-gradient(135deg,var(--p),var(--c)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height: 1; }
+  .stat-l { font-size: .75rem; color: var(--muted); margin-top: .4rem; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; }
+
+  /* ── SECTION LAYOUT ── */
+  .sec { position: relative; z-index: 1; padding: 6rem 4rem; max-width: 1200px; margin: 0 auto; }
+  .sec-label { display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--c); margin-bottom: .6rem; }
+  .sec-title { font-family: var(--fh); font-size: clamp(1.8rem,3vw,2.6rem); font-weight: 700; line-height: 1.15; letter-spacing: -.02em; margin-bottom: .6rem; }
+  .sec-sub { color: var(--muted); font-size: .93rem; line-height: 1.75; max-width: 500px; }
+
+  /* ── ABOUT ── */
+  #about .inner { display: flex; gap: 5rem; align-items: center; }
+  .about-3d { flex: 0 0 260px; }
+  #orb-canvas { width: 260px; height: 260px; }
+  .about-body p { color: var(--muted); line-height: 1.85; font-size: .94rem; margin-bottom: .9rem; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.2rem; }
+  .pill { padding: .28rem .85rem; border-radius: 100px; border: 1px solid var(--border); font-size: .75rem; font-weight: 500; color: var(--muted); }
+
+  /* ── SKILLS ── */
+  .skill-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 1rem; margin-top: 2.5rem; }
+  .sg {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.4rem 1.5rem;
+    transition: transform .25s, border-color .25s;
+    position: relative; overflow: hidden;
+  }
+  .sg::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; height: 2px; background: linear-gradient(90deg, var(--p), var(--c)); opacity: 0; transition: opacity .3s; border-radius: 16px 16px 0 0; }
+  .sg:hover { transform: translateY(-4px); border-color: rgba(123,47,255,.25); }
+  .sg:hover::before { opacity: 1; }
+  .sg-label { font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--p2); margin-bottom: .9rem; display: flex; align-items: center; gap: .5rem; }
+  .sg-label em { font-size: 1.1rem; font-style: normal; }
+  .pills { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .sp { padding: .22rem .7rem; border-radius: 100px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); font-size: .77rem; color: var(--text); font-weight: 500; }
+
+  /* ── EXPERIENCE ── */
+  .timeline { margin-top: 2.5rem; padding-left: 1.5rem; position: relative; }
+  .timeline::before { content:''; position:absolute; left:0; top:10px; bottom:10px; width:2px; background: linear-gradient(to bottom,var(--p),var(--c),rgba(0,229,255,0)); border-radius:2px; }
+  .tli { position:relative; margin-bottom:2.5rem; padding-left:2rem; }
+  .tli::before { content:''; position:absolute; left:-1.95rem; top:9px; width:10px; height:10px; border-radius:50%; background:var(--p); box-shadow:0 0 16px rgba(123,47,255,.7); border:2px solid var(--bg); }
+  .tli-head { display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:.6rem; margin-bottom:.3rem; }
+  .tli-role { font-family:var(--fh); font-size:1.08rem; font-weight:600; }
+  .tli-badge { font-size:.72rem; font-weight:700; padding:.18rem .8rem; border-radius:100px; background:rgba(0,229,255,.08); border:1px solid rgba(0,229,255,.2); color:var(--c); white-space:nowrap; }
+  .tli-co { font-size:.85rem; color:var(--p2); font-weight:600; margin-bottom:.2rem; }
+  .tli-loc { font-size:.75rem; color:var(--muted); margin-bottom:.65rem; }
+  .tli-ul { list-style:none; }
+  .tli-ul li { color:var(--muted); font-size:.85rem; line-height:1.75; padding-left:1.1rem; position:relative; margin-bottom:.2rem; }
+  .tli-ul li::before { content:'→'; position:absolute; left:0; color:var(--p2); font-size:.75rem; top:.05rem; }
+
+  /* ── PROJECTS ── */
+  .filter-bar { display:flex; gap:.5rem; flex-wrap:wrap; margin:1.8rem 0; }
+  .fb { padding:.38rem 1rem; border-radius:100px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:.78rem; font-weight:500; cursor:pointer; font-family:var(--fb); transition:all .2s; }
+  .fb:hover { border-color:rgba(123,47,255,.4); color:var(--text); }
+  .fb.on { background:var(--p); border-color:var(--p); color:#fff; box-shadow:0 4px 16px rgba(123,47,255,.3); }
+
+  /* Projects grid */
+  .proj-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.2rem;
+  }
+  .proj-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden;
+    transition: border-color .3s, box-shadow .3s, transform .3s; display: flex; flex-direction: column;
+    transform-style: preserve-3d; will-change: transform;
+  }
+  .proj-card:hover { border-color: rgba(123,47,255,.35); box-shadow: 0 20px 50px rgba(0,0,0,.55); }
+  .proj-card.hidden { display: none; }
+  .pc-thumb { width:100%; height:145px; display:flex; align-items:center; justify-content:center; font-size:3.2rem; flex-shrink:0; position:relative; }
+  .pc-thumb::after { content:''; position:absolute; inset:0; background:rgba(2,2,14,.25); }
+  .pc-body { padding:1.1rem 1.2rem; flex:1; display:flex; flex-direction:column; }
+  .pc-tags { display:flex; gap:.35rem; flex-wrap:wrap; margin-bottom:.6rem; }
+  .tg { padding:.16rem .55rem; border-radius:100px; font-size:.65rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+  .tg-flutter { background:rgba(123,47,255,.15); color:#b08aff; }
+  .tg-ios { background:rgba(0,229,255,.1); color:var(--c); }
+  .tg-android { background:rgba(0,229,160,.1); color:#00e5a0; }
+  .tg-fin { background:rgba(255,200,50,.1); color:#ffc832; }
+  .tg-re { background:rgba(0,200,150,.1); color:#00c896; }
+  .tg-well { background:rgba(200,100,255,.1); color:#c864ff; }
+  .tg-fit { background:rgba(255,140,0,.1); color:#ff8c00; }
+  .tg-soc { background:rgba(255,61,127,.1); color:var(--pk); }
+  .tg-ent { background:rgba(255,220,80,.1); color:#ffdc50; }
+  .tg-mkt { background:rgba(255,100,100,.1); color:#ff6464; }
+  .tg-hlt { background:rgba(100,200,255,.1); color:#64c8ff; }
+  .pc-name { font-family:var(--fh); font-size:1rem; font-weight:600; margin-bottom:.4rem; }
+  .pc-desc { color:var(--muted); font-size:.8rem; line-height:1.6; flex:1; margin-bottom:.9rem; }
+  .pc-links { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:auto; }
+  .pl { font-size:.72rem; font-weight:600; text-decoration:none; padding:.28rem .7rem; border-radius:7px; border:1px solid rgba(123,47,255,.22); color:var(--p2); transition:all .2s; }
+  .pl:hover { background:rgba(123,47,255,.12); border-color:var(--p); color:#fff; }
+  .pl.and { border-color:rgba(0,229,160,.2); color:#00e5a0; }
+  .pl.and:hover { background:rgba(0,229,160,.1); border-color:#00e5a0; }
+  .pl.uw { border-color:rgba(0,229,160,.2); color:#6fba6f; }
+  .pl.uw:hover { background:rgba(111,186,111,.1); border-color:#6fba6f; }
+
+  /* ── CONTACT ── */
+  #contact .inner { display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:start; }
+  .contact-links { display:flex; flex-direction:column; gap:.7rem; margin-top:1.5rem; }
+  .cl {
+    display:flex; align-items:center; gap:1rem; padding:.9rem 1.2rem;
+    border-radius:14px; background:var(--card); border:1px solid var(--border);
+    text-decoration:none; color:var(--text); transition:border-color .2s, transform .2s;
+  }
+  .cl:hover { border-color:rgba(123,47,255,.35); transform:translateX(5px); }
+  .cl-ic { font-size:1.2rem; flex-shrink:0; }
+  .cl-lbl { font-size:.7rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
+  .cl-val { font-size:.87rem; font-weight:500; margin-top:.1rem; }
+  .contact-right { display:flex; flex-direction:column; gap:1rem; }
+  .cc {
+    padding:1.8rem; border-radius:18px; background:var(--card); border:1px solid var(--border);
+    position:relative; overflow:hidden;
+  }
+  .cc::before { content:''; position:absolute; top:-50px; right:-50px; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle,rgba(123,47,255,.14),transparent 70%); pointer-events:none; }
+  .cc h3 { font-family:var(--fh); font-size:1.05rem; font-weight:600; margin-bottom:.4rem; }
+  .cc p { color:var(--muted); font-size:.82rem; line-height:1.65; margin-bottom:1.1rem; }
+
+  /* ── FOOTER ── */
+  footer { text-align:center; padding:1.8rem; color:var(--muted); font-size:.78rem; border-top:1px solid var(--border); position:relative; z-index:1; }
+
+  /* ── REVEAL ── */
+  .rv { opacity:0; transform:translateY(28px); transition:opacity .7s ease, transform .7s ease; }
+  .rv.in { opacity:1; transform:none; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:900px){
+    nav { padding:1rem 1.5rem; }
+    .nav-links { display:none; }
+    #hero { padding: 0 1.5rem; min-height: 100vh; }
+    .hero-left { padding-top: 6.5rem; max-width: 100%; padding-bottom: 3rem; }
+    #stats,.sec { padding:3rem 1.5rem; }
+    .stats-grid { grid-template-columns:repeat(2,1fr); }
+    .stats-grid .stat-item:last-child { grid-column:span 2; }
+    #about .inner { flex-direction:column; gap:2rem; }
+    #contact .inner { grid-template-columns:1fr; }
+    .proj-outer { padding: 0 1.5rem 3rem !important; }
+    .proj-grid { grid-template-columns: 1fr; }
+  }
   </style>
 </head>
 <body>
+<div class="mesh"></div>
 
-<canvas id="bg-canvas"></canvas>
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="boot-phone">
+    <div class="boot-btn-r"></div>
+    <div class="boot-btn-l1"></div>
+    <div class="boot-btn-l2"></div>
+    <div class="boot-notch"></div>
+    <div class="boot-screen">
+      <div class="boot-content">
+        <div class="boot-logo-icon">📱</div>
+        <div class="boot-name-text">Talha Latif</div>
+        <div class="boot-role-text">Mobile Engineer</div>
+        <div class="boot-bar-wrap"><div class="boot-bar-fill"></div></div>
+      </div>
+    </div>
+    <div class="boot-home"></div>
+  </div>
+  <div class="boot-status" id="bootStatus">Booting...</div>
+</div>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">Talha Latif</div>
+  <div class="logo">Talha Latif</div>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#skills">Skills</a></li>
@@ -197,57 +419,60 @@
     <li><a href="#contact">Contact</a></li>
   </ul>
   <div class="nav-right">
-    <a href="https://www.upwork.com/freelancers/talhal4?mp_source=share" target="_blank" class="btn-outline">Upwork</a>
-    <a href="#contact" class="btn-primary">Hire Me</a>
+    <a href="https://www.upwork.com/freelancers/talhal4?mp_source=share" target="_blank" class="btn btn-ghost">Upwork</a>
+    <a href="mailto:talhalatif636@gmail.com" class="btn btn-fill">Hire Me ↗</a>
   </div>
 </nav>
 
 <!-- HERO -->
-<section id="hero-wrap" style="position:relative;z-index:1;">
-  <div id="hero">
-    <div class="hero-content reveal">
-      <span class="hero-badge">Open to opportunities</span>
-      <h1 class="hero-title">Talha Latif</h1>
-      <div class="hero-role">Mobile Engineer · Flutter Developer</div>
-      <p class="hero-sub">
-        Innovative mobile engineer with 4+ years of experience delivering high-performance, scalable, user-centric apps. Specialized in fintech, real estate, wellness, and construction tech — from concept to App Store.
-      </p>
-      <div class="hero-ctas">
-        <a href="#projects" class="btn-primary">View My Work</a>
-        <a href="#contact" class="btn-outline">Get in Touch</a>
-      </div>
+<section id="hero" style="position:relative;z-index:1;">
+  <div class="hero-left rv">
+    <div class="hero-badge">Available for new projects</div>
+    <h1 class="hero-name">Talha<br/>Latif</h1>
+    <div class="hero-role">Mobile Engineer · Flutter Developer</div>
+    <p class="hero-sub">4+ years building high-performance iOS &amp; Android apps — fintech, real estate, wellness, Web3 &amp; beyond. From concept to App Store.</p>
+    <div class="hero-ctas">
+      <a href="#projects" class="btn btn-fill">View 13 Apps ↓</a>
+      <a href="#contact" class="btn btn-ghost">Let's Talk</a>
     </div>
-    <div class="hero-visual">
-      <canvas id="phone-canvas"></canvas>
-    </div>
+  </div>
+  <div class="hero-right">
+    <canvas id="hero-canvas"></canvas>
   </div>
 </section>
 
+<!-- MARQUEE -->
+<div class="marquee-section" style="position:relative;z-index:1;">
+  <div class="marquee-track" id="mq-track"></div>
+</div>
+
 <!-- STATS -->
-<section id="stats">
-  <div class="stat-card reveal"><div class="stat-num">4+</div><div class="stat-label">Years Experience</div></div>
-  <div class="stat-card reveal" style="transition-delay:.08s"><div class="stat-num">13</div><div class="stat-label">Apps Shipped</div></div>
-  <div class="stat-card reveal" style="transition-delay:.16s"><div class="stat-num">iOS & Android</div><div class="stat-label">Cross-Platform</div></div>
-  <div class="stat-card reveal" style="transition-delay:.24s"><div class="stat-num">3</div><div class="stat-label">Companies</div></div>
-  <div class="stat-card reveal" style="transition-delay:.32s"><div class="stat-num">Web3</div><div class="stat-label">Blockchain & Crypto</div></div>
+<section id="stats" style="position:relative;z-index:1;">
+  <div class="stats-grid rv">
+    <div class="stat-item"><div class="stat-n" data-count="4">0</div><div class="stat-l">Years Exp.</div></div>
+    <div class="stat-item"><div class="stat-n" data-count="13">0</div><div class="stat-l">Apps Shipped</div></div>
+    <div class="stat-item"><div class="stat-n" data-count="3">0</div><div class="stat-l">Companies</div></div>
+    <div class="stat-item"><div class="stat-n" style="-webkit-text-fill-color:unset;background:none;color:#00e5ff;font-size:1.3rem;">iOS &amp; Android</div><div class="stat-l">Cross-Platform</div></div>
+    <div class="stat-item"><div class="stat-n" style="-webkit-text-fill-color:unset;background:none;color:#ff3d7f;font-size:1.3rem;">Web3 Ready</div><div class="stat-l">Blockchain · Crypto</div></div>
+  </div>
 </section>
 
 <!-- ABOUT -->
-<section id="about">
-  <div class="section-wrap">
+<section id="about" style="position:relative;z-index:1;">
+  <div class="sec">
     <div class="inner">
-      <div class="about-3d reveal"><canvas id="cube-canvas"></canvas></div>
-      <div class="about-text reveal" style="transition-delay:.15s">
-        <span class="section-label">About Me</span>
-        <h2 class="section-title">Building apps people can't put down</h2>
-        <p>I'm a Flutter specialist who has shipped 13 production apps across fintech, real estate, wellness, fitness, and enterprise verticals. I architect complete products from zero — handling everything from state management and offline sync to Web3 wallet integration and biometric security.</p>
-        <p>Currently serving as Lead Frontend Engineer at Dupely, where I oversee mobile and browser extension development, mentor developers, and drive engineering best practices. Previously built multi-chain crypto wallets, real estate legal platforms, and AI-powered construction documentation tools at Fantech Labs and Teglax.</p>
-        <p>I write clean, optimized, and secure code — and I care deeply about the details that make users actually enjoy an app.</p>
-        <div class="about-chips">
-          <span class="about-chip">BS Computer Science — 3.4 GPA</span>
-          <span class="about-chip">University of Okara</span>
-          <span class="about-chip">Okara, Pakistan</span>
-          <span class="about-chip">English (Professional)</span>
+      <div class="about-3d rv"><canvas id="orb-canvas"></canvas></div>
+      <div class="about-body rv" style="transition-delay:.15s">
+        <span class="sec-label">About Me</span>
+        <h2 class="sec-title">I build apps people can't put down</h2>
+        <p>Flutter specialist with 13 production apps shipped across fintech, real estate, wellness, fitness, and enterprise. I architect complete products end-to-end — from state management and offline sync to Web3 wallet integration and biometric security.</p>
+        <p>Currently <strong style="color:var(--text)">Lead Frontend Engineer at Dupely</strong>, overseeing mobile and browser extension development. Previously built multi-chain crypto wallets, real estate legal platforms, and AI-powered construction tools at Fantech Labs and Teglax.</p>
+        <p>Clean architecture. Optimized performance. Secure by default. And a genuine obsession with the details that make users love an app.</p>
+        <div class="pill-row">
+          <span class="pill">BS Computer Science — 3.4 GPA</span>
+          <span class="pill">University of Okara</span>
+          <span class="pill">Pakistan 🇵🇰</span>
+          <span class="pill">English (Professional)</span>
         </div>
       </div>
     </div>
@@ -255,590 +480,507 @@
 </section>
 
 <!-- SKILLS -->
-<section id="skills">
-  <div class="section-wrap">
-    <div class="reveal">
-      <span class="section-label">Expertise</span>
-      <h2 class="section-title">Skills & Technologies</h2>
-      <p class="section-sub">From Dart to blockchains — the full stack of a mobile engineer who ships.</p>
+<section id="skills" style="position:relative;z-index:1;">
+  <div class="sec">
+    <div class="rv">
+      <span class="sec-label">Expertise</span>
+      <h2 class="sec-title">Skills & Technologies</h2>
+      <p class="sec-sub">The full toolkit of a mobile engineer who ships production-grade apps.</p>
     </div>
-    <div class="skills-groups">
-      <div class="skill-group reveal">
-        <div class="skill-group-label"><span>📱</span>Core Mobile</div>
-        <div class="skill-pills">
-          <span class="skill-pill">Flutter & Dart (Expert)</span>
-          <span class="skill-pill">iOS (Swift)</span>
-          <span class="skill-pill">Android (Kotlin)</span>
-          <span class="skill-pill">Cross-Platform</span>
-        </div>
-      </div>
-      <div class="skill-group reveal" style="transition-delay:.06s">
-        <div class="skill-group-label"><span>⚙️</span>State Management</div>
-        <div class="skill-pills">
-          <span class="skill-pill">GetX</span>
-          <span class="skill-pill">Riverpod</span>
-          <span class="skill-pill">BLoC</span>
-          <span class="skill-pill">Provider</span>
-        </div>
-      </div>
-      <div class="skill-group reveal" style="transition-delay:.12s">
-        <div class="skill-group-label"><span>☁️</span>Backend & Cloud</div>
-        <div class="skill-pills">
-          <span class="skill-pill">Firebase (Auth, Firestore, FCM)</span>
-          <span class="skill-pill">Supabase</span>
-          <span class="skill-pill">REST APIs</span>
-          <span class="skill-pill">GraphQL</span>
-          <span class="skill-pill">AWS S3 & CloudFront</span>
-        </div>
-      </div>
-      <div class="skill-group reveal" style="transition-delay:.18s">
-        <div class="skill-group-label"><span>🔗</span>Web3 & Blockchain</div>
-        <div class="skill-pills">
-          <span class="skill-pill">Ethereum</span>
-          <span class="skill-pill">Polygon</span>
-          <span class="skill-pill">BNB Chain</span>
-          <span class="skill-pill">Uniswap SDK</span>
-          <span class="skill-pill">Smart Contract Integration</span>
-        </div>
-      </div>
-      <div class="skill-group reveal" style="transition-delay:.24s">
-        <div class="skill-group-label"><span>🔐</span>Security & Payments</div>
-        <div class="skill-pills">
-          <span class="skill-pill">Biometric Auth</span>
-          <span class="skill-pill">Passkeys</span>
-          <span class="skill-pill">RBAC</span>
-          <span class="skill-pill">Moyasar</span>
-          <span class="skill-pill">Custom Gateways</span>
-          <span class="skill-pill">Subscription Systems</span>
-        </div>
-      </div>
-      <div class="skill-group reveal" style="transition-delay:.3s">
-        <div class="skill-group-label"><span>🚀</span>DevOps & Delivery</div>
-        <div class="skill-pills">
-          <span class="skill-pill">CI/CD Pipelines</span>
-          <span class="skill-pill">Git</span>
-          <span class="skill-pill">App Store Deployment</span>
-          <span class="skill-pill">Play Store Deployment</span>
-          <span class="skill-pill">Performance Optimization</span>
-        </div>
-      </div>
-      <div class="skill-group reveal" style="transition-delay:.36s">
-        <div class="skill-group-label"><span>⚡</span>Advanced Features</div>
-        <div class="skill-pills">
-          <span class="skill-pill">Real-Time Chat</span>
-          <span class="skill-pill">Push Notifications</span>
-          <span class="skill-pill">Offline Sync</span>
-          <span class="skill-pill">Photo/Video Handling</span>
-          <span class="skill-pill">AI Integration</span>
-          <span class="skill-pill">Digital Signatures</span>
-        </div>
-      </div>
+    <div class="skill-groups">
+      <div class="sg rv"><div class="sg-label"><em>📱</em>Core Mobile</div><div class="pills"><span class="sp">Flutter & Dart (Expert)</span><span class="sp">iOS / Swift</span><span class="sp">Android / Kotlin</span><span class="sp">Cross-Platform</span></div></div>
+      <div class="sg rv" style="transition-delay:.07s"><div class="sg-label"><em>⚙️</em>State Management</div><div class="pills"><span class="sp">GetX</span><span class="sp">Riverpod</span><span class="sp">BLoC</span><span class="sp">Provider</span></div></div>
+      <div class="sg rv" style="transition-delay:.14s"><div class="sg-label"><em>☁️</em>Backend & Cloud</div><div class="pills"><span class="sp">Firebase (Auth, Firestore, FCM)</span><span class="sp">Supabase</span><span class="sp">REST APIs</span><span class="sp">GraphQL</span><span class="sp">AWS S3 & CloudFront</span></div></div>
+      <div class="sg rv" style="transition-delay:.21s"><div class="sg-label"><em>🔗</em>Web3 & Blockchain</div><div class="pills"><span class="sp">Ethereum</span><span class="sp">Polygon</span><span class="sp">BNB Chain</span><span class="sp">Uniswap SDK</span><span class="sp">Smart Contracts</span></div></div>
+      <div class="sg rv" style="transition-delay:.28s"><div class="sg-label"><em>🔐</em>Security & Payments</div><div class="pills"><span class="sp">Biometric Auth</span><span class="sp">Passkeys</span><span class="sp">RBAC</span><span class="sp">Moyasar</span><span class="sp">Custom Gateways</span></div></div>
+      <div class="sg rv" style="transition-delay:.35s"><div class="sg-label"><em>⚡</em>Advanced Features</div><div class="pills"><span class="sp">Real-Time Chat</span><span class="sp">Offline Sync</span><span class="sp">Push Notifications</span><span class="sp">AI Integration</span><span class="sp">Digital Signatures</span></div></div>
+      <div class="sg rv" style="transition-delay:.42s"><div class="sg-label"><em>🚀</em>DevOps & Delivery</div><div class="pills"><span class="sp">CI/CD</span><span class="sp">Git</span><span class="sp">App Store</span><span class="sp">Play Store</span><span class="sp">Performance Optimization</span></div></div>
     </div>
   </div>
 </section>
 
 <!-- EXPERIENCE -->
-<section id="experience">
-  <div class="section-wrap">
-    <div class="reveal">
-      <span class="section-label">Career</span>
-      <h2 class="section-title">Professional Experience</h2>
+<section id="experience" style="position:relative;z-index:1;">
+  <div class="sec">
+    <div class="rv">
+      <span class="sec-label">Career</span>
+      <h2 class="sec-title">Professional Experience</h2>
     </div>
     <div class="timeline">
-      <div class="timeline-item reveal">
-        <div class="tl-header">
-          <div class="tl-role">Lead Frontend Engineer</div>
-          <span class="tl-period">Feb 2026 – Present</span>
-        </div>
-        <div class="tl-company">Dupely</div>
-        <div class="tl-location">Remote</div>
-        <div class="tl-desc">
-          <ul>
-            <li>Leading frontend development across mobile apps and browser extensions, ensuring consistent UX across platforms</li>
-            <li>Designing, implementing, and reviewing production-level features hands-on</li>
-            <li>Leading QA processes, testing strategies, bug fixes, and performance optimizations</li>
-            <li>Mentoring developers and establishing coding standards, documentation, and best practices</li>
-            <li>Collaborating with backend engineers, PMs, and designers to ship robust features</li>
-          </ul>
-        </div>
+      <div class="tli rv">
+        <div class="tli-head"><div class="tli-role">Lead Frontend Engineer</div><span class="tli-badge">Feb 2026 – Present</span></div>
+        <div class="tli-co">Dupely · Remote</div>
+        <ul class="tli-ul">
+          <li>Leading frontend development across mobile apps and browser extension platforms</li>
+          <li>Designing and reviewing production features; leading QA and performance optimization</li>
+          <li>Mentoring developers, establishing coding standards and best practices</li>
+          <li>Collaborating with backend engineers, PMs, and designers to ship robust features</li>
+        </ul>
       </div>
-      <div class="timeline-item reveal">
-        <div class="tl-header">
-          <div class="tl-role">Mobile Engineer (Flutter)</div>
-          <span class="tl-period">Sep 2023 – Mar 2026</span>
-        </div>
-        <div class="tl-company">Fantech Labs</div>
-        <div class="tl-location">On-site · Okara, Pakistan</div>
-        <div class="tl-desc">
-          <ul>
-            <li>Led mobile development across fintech, real estate, and wellness applications from architecture to deployment</li>
-            <li>Built EQ9 (multi-chain crypto wallet) and Home Appraised entirely from scratch to App Store</li>
-            <li>Specialized in complex state management, real-time systems, blockchain integration, and enterprise security</li>
-            <li>Built Legal Direct with bank-grade secure communication and ID verification systems</li>
-            <li>Delivered SpiritualYou, Rel8.app, FNMR, and Montage Doku with full offline-first architectures</li>
-          </ul>
-        </div>
+      <div class="tli rv">
+        <div class="tli-head"><div class="tli-role">Mobile Engineer (Flutter)</div><span class="tli-badge">Sep 2023 – Mar 2026</span></div>
+        <div class="tli-co">Fantech Labs · Okara, Pakistan</div>
+        <ul class="tli-ul">
+          <li>Built EQ9 multi-chain crypto wallet (Ethereum, BNB, Polygon) from scratch to App Store</li>
+          <li>Architected Home Appraised, Legal Direct with bank-grade security and ID verification</li>
+          <li>Delivered SpiritualYou, FNMR, Rel8.app, Montage Doku with offline-first architecture</li>
+          <li>Specialized in real-time systems, blockchain integration, and complex state management</li>
+        </ul>
       </div>
-      <div class="timeline-item reveal">
-        <div class="tl-header">
-          <div class="tl-role">Mobile Engineer (Flutter)</div>
-          <span class="tl-period">Dec 2021 – Sep 2023</span>
-        </div>
-        <div class="tl-company">Teglax</div>
-        <div class="tl-location">On-site · Okara, Pakistan</div>
-        <div class="tl-desc">
-          <ul>
-            <li>Delivered production Flutter apps across e-commerce, health, mental health, and enterprise systems</li>
-            <li>Built FixMix (home services marketplace) and Pet AI as lead developer from scratch to production</li>
-            <li>Integrated REST/GraphQL APIs for real-time data, payments, and operational workflows</li>
-            <li>Improved app reliability by debugging production issues and optimizing UI performance in live environments</li>
-          </ul>
-        </div>
+      <div class="tli rv">
+        <div class="tli-head"><div class="tli-role">Mobile Engineer (Flutter)</div><span class="tli-badge">Dec 2021 – Sep 2023</span></div>
+        <div class="tli-co">Teglax · Okara, Pakistan</div>
+        <ul class="tli-ul">
+          <li>Built FixMix (Saudi home services marketplace) and Pet AI as lead developer</li>
+          <li>Delivered apps across e-commerce, health, mental health, and enterprise systems</li>
+          <li>Integrated REST/GraphQL APIs for real-time data, payments, and operational workflows</li>
+        </ul>
       </div>
     </div>
   </div>
 </section>
 
 <!-- PROJECTS -->
-<section id="projects">
-  <div class="section-wrap">
-    <div class="reveal">
-      <span class="section-label">Portfolio</span>
-      <h2 class="section-title">13 Apps Shipped to Production</h2>
-      <p class="section-sub">Real apps. Real users. Real stores.</p>
+<section id="projects" style="position:relative;z-index:1;">
+  <div class="sec" style="padding-bottom:1rem;">
+    <div class="rv">
+      <span class="sec-label">Portfolio</span>
+      <h2 class="sec-title">13 Apps. Live on the Stores.</h2>
+      <p class="sec-sub">Drag to scroll. Filter by category. Every app is live — tap the store links.</p>
     </div>
-
-    <div class="filter-bar reveal" style="transition-delay:.1s">
-      <button class="filter-btn active" data-filter="all">All (13)</button>
-      <button class="filter-btn" data-filter="fintech">Fintech</button>
-      <button class="filter-btn" data-filter="realestate">Real Estate</button>
-      <button class="filter-btn" data-filter="wellness">Wellness</button>
-      <button class="filter-btn" data-filter="fitness">Fitness</button>
-      <button class="filter-btn" data-filter="enterprise">Enterprise</button>
-      <button class="filter-btn" data-filter="social">Social</button>
-      <button class="filter-btn" data-filter="marketplace">Marketplace</button>
-      <button class="filter-btn" data-filter="health">Health</button>
-    </div>
-
-    <div class="projects-grid" id="projects-grid">
-      <!-- rendered by JS -->
-    </div>
+    <div class="filter-bar rv" style="transition-delay:.1s" id="fbar"></div>
+  </div>
+  <div class="proj-outer" style="position:relative;z-index:1;padding:0 4rem 5rem;">
+    <div class="proj-grid" id="proj-track"></div>
   </div>
 </section>
 
 <!-- CONTACT -->
-<section id="contact">
-  <div class="section-wrap">
+<section id="contact" style="position:relative;z-index:1;">
+  <div class="sec">
     <div class="inner">
-      <div class="contact-left reveal">
-        <span class="section-label">Contact</span>
-        <h2 class="section-title">Let's build something great</h2>
-        <p>I'm open to freelance projects, full-time roles, and interesting collaborations. Whether you need a Flutter app from scratch or want to level up an existing one — let's talk.</p>
-        <div class="contact-links-grid">
-          <a href="mailto:talhalatif636@gmail.com" class="contact-item">
-            <span class="contact-item-icon">✉️</span>
-            <div class="contact-item-text">
-              <div class="contact-item-label">Email</div>
-              <div class="contact-item-value">talhalatif636@gmail.com</div>
-            </div>
-          </a>
-          <a href="https://www.linkedin.com/in/talha-latif/" target="_blank" class="contact-item">
-            <span class="contact-item-icon">💼</span>
-            <div class="contact-item-text">
-              <div class="contact-item-label">LinkedIn</div>
-              <div class="contact-item-value">linkedin.com/in/talha-latif</div>
-            </div>
-          </a>
-          <a href="https://github.com/mr-talha110" target="_blank" class="contact-item">
-            <span class="contact-item-icon">🐙</span>
-            <div class="contact-item-text">
-              <div class="contact-item-label">GitHub</div>
-              <div class="contact-item-value">mr-talha110</div>
-            </div>
-          </a>
-          <a href="https://www.upwork.com/freelancers/talhal4?mp_source=share" target="_blank" class="contact-item">
-            <span class="contact-item-icon">🟢</span>
-            <div class="contact-item-text">
-              <div class="contact-item-label">Upwork</div>
-              <div class="contact-item-value">upwork.com/freelancers/talhal4</div>
-            </div>
-          </a>
+      <div class="rv">
+        <span class="sec-label">Contact</span>
+        <h2 class="sec-title">Let's build something great</h2>
+        <p class="sec-sub">Open to freelance, full-time, and interesting collaborations. I deliver production-quality Flutter apps with clean architecture and sharp UI.</p>
+        <div class="contact-links">
+          <a href="mailto:talhalatif636@gmail.com" class="cl"><span class="cl-ic">✉️</span><div><div class="cl-lbl">Email</div><div class="cl-val">talhalatif636@gmail.com</div></div></a>
+          <a href="https://www.linkedin.com/in/talha-latif/" target="_blank" class="cl"><span class="cl-ic">💼</span><div><div class="cl-lbl">LinkedIn</div><div class="cl-val">linkedin.com/in/talha-latif</div></div></a>
+          <a href="https://github.com/mr-talha110" target="_blank" class="cl"><span class="cl-ic">🐙</span><div><div class="cl-lbl">GitHub</div><div class="cl-val">mr-talha110</div></div></a>
+          <a href="https://www.upwork.com/freelancers/talhal4?mp_source=share" target="_blank" class="cl"><span class="cl-ic">🟢</span><div><div class="cl-lbl">Upwork</div><div class="cl-val">upwork.com/freelancers/talhal4</div></div></a>
         </div>
       </div>
-      <div class="contact-right reveal" style="transition-delay:.15s">
-        <div class="contact-card-big">
+      <div class="contact-right rv" style="transition-delay:.15s">
+        <div class="cc">
           <h3>Available for Freelance</h3>
-          <p>Need a Flutter app built the right way? I take on select freelance projects and deliver production-quality apps with clean architecture.</p>
-          <a href="https://www.upwork.com/freelancers/talhal4?mp_source=share" target="_blank" class="btn-primary" style="display:inline-block;">Hire on Upwork →</a>
+          <p>Need a Flutter app built right? I take on select projects and deliver production-quality apps with clean architecture.</p>
+          <a href="https://www.upwork.com/freelancers/talhal4?mp_source=share" target="_blank" class="btn btn-fill">Hire on Upwork →</a>
         </div>
-        <div class="contact-card-big">
+        <div class="cc">
           <h3>Open to Full-Time Roles</h3>
-          <p>Looking for a Flutter expert who can own the mobile product? I bring 4+ years of shipping experience and a track record across multiple verticals.</p>
-          <a href="mailto:talhalatif636@gmail.com" class="btn-outline" style="display:inline-block;">Send me an Email →</a>
+          <p>Looking for a Flutter expert to own your mobile product? 4+ years of shipping experience across multiple verticals.</p>
+          <a href="mailto:talhalatif636@gmail.com" class="btn btn-ghost">Send an Email →</a>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<footer>© 2026 Talha Latif · Mobile Engineer & Flutter Developer · Built with Three.js</footer>
+<footer style="position:relative;z-index:1;">© 2026 Talha Latif · Mobile Engineer & Flutter Developer</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════════
+   PRELOADER — phone boot sequence
+═══════════════════════════════════════════ */
+const bootMessages = ['Booting...', 'Loading apps...', 'Almost ready...', 'Launching ✦'];
+const bootEl = document.getElementById('bootStatus');
+let bi = 0;
+const bootTimer = setInterval(() => {
+  bi++; if (bi < bootMessages.length) bootEl.textContent = bootMessages[bi];
+  else clearInterval(bootTimer);
+}, 700);
+setTimeout(() => { document.getElementById('preloader').classList.add('done'); }, 3100);
+
+/* ═══════════════════════════════════════════
+   CUSTOM CURSOR
+═══════════════════════════════════════════ */
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let cx = 0, cy = 0, rx = 0, ry = 0;
+window.addEventListener('mousemove', e => { cx = e.clientX; cy = e.clientY; });
+(function animCursor() {
+  requestAnimationFrame(animCursor);
+  rx += (cx - rx) * 0.14; ry += (cy - ry) * 0.14;
+  cur.style.left = cx + 'px'; cur.style.top = cy + 'px';
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+})();
+
+/* ═══════════════════════════════════════════
+   MARQUEE BUILD
+═══════════════════════════════════════════ */
+const mqItems = ['Flutter','Dart','Firebase','GetX','Riverpod','BLoC','Ethereum','Polygon','Web3','AWS','REST API','GraphQL','Supabase','CI/CD','Biometric Auth','Offline Sync','Real-Time Chat','Moyasar','Play Store','App Store'];
+const track = document.getElementById('mq-track');
+const html = mqItems.map(i=>`<span>${i}</span>`).join('');
+track.innerHTML = html + html; // double for seamless loop
+
+/* ═══════════════════════════════════════════
    PROJECT DATA
-══════════════════════════════════════ */
-const PROJECTS = [
-  {
-    name: 'EQ9',
-    icon: '💰',
-    gradient: 'linear-gradient(135deg,#0a1628,#1a3a5c)',
-    category: 'fintech',
-    tags: ['Flutter','iOS','Fintech','Web3'],
-    desc: 'Powerful multi-chain crypto wallet supporting Ethereum, BNB, and Polygon with real-time swaps, deposits/withdrawals, scheduled recurring transactions, and live market charts.',
-    ios: 'https://apps.apple.com/us/app/eq9/id6502989811',
-    upwork: 'https://www.upwork.com/freelancers/talhal4?p=1954293260117250048',
-  },
-  {
-    name: 'Dupely: Find It For Less',
-    icon: '🛍️',
-    gradient: 'linear-gradient(135deg,#1a0a0a,#3d1a00)',
-    category: 'fintech',
-    tags: ['Flutter','iOS','Android','Fintech'],
-    desc: 'Price comparison app that scans thousands of listings to find the same product for less. Compare prices, reviews, and seller reputation side-by-side across trusted sellers.',
-    ios: 'https://apps.apple.com/us/app/dupely-find-it-for-less/id6755406950',
-    android: 'https://play.google.com/store/apps/details?id=com.dupely.dupelyapp',
-  },
-  {
-    name: 'Home Appraised',
-    icon: '🏠',
-    gradient: 'linear-gradient(135deg,#0d1f0d,#0a3d2a)',
-    category: 'realestate',
-    tags: ['Flutter','iOS','Android','Real Estate'],
-    desc: 'Digital real estate appraisal platform for Ontario homeowners. Upload photos and receive certified professional valuation reports online — no in-person visits or appointments needed.',
-    ios: 'https://apps.apple.com/pk/app/home-appraised/id6742306213',
-    android: 'https://play.google.com/store/apps/details?id=com.fantech.homeappraised.ai&hl=en',
-    upwork: 'https://www.upwork.com/freelancers/talhal4?p=1935780953714380800',
-  },
-  {
-    name: 'Legal Direct',
-    icon: '⚖️',
-    gradient: 'linear-gradient(135deg,#0a0f1f,#1a2a4a)',
-    category: 'realestate',
-    tags: ['Flutter','iOS','Android','Real Estate'],
-    desc: 'Modern real estate legal platform for Ontario clients — refinancing, mortgages, buying, and selling. Secure ID verification, real-time milestone tracking, and secure document sharing.',
-    ios: 'https://apps.apple.com/us/app/legal-direct/id6479345754',
-    android: 'https://play.google.com/store/apps/details?id=com.legaldirect.app',
-  },
-  {
-    name: 'SpiritualYou',
-    icon: '🧘',
-    gradient: 'linear-gradient(135deg,#1a0a2e,#2e0a4a)',
-    category: 'wellness',
-    tags: ['Flutter','iOS','Android','Wellness'],
-    desc: 'Spiritual journey app with lucid dreaming, astral projection, meditation, and mindfulness. Features AI-powered insights, binaural beats, and comprehensive self-awareness articles.',
-    ios: 'https://apps.apple.com/pk/app/spiritualyou-meditate-awaken/id6504926797',
-    android: 'https://play.google.com/store/apps/details?id=com.fantech.spiritualyou&hl=en',
-  },
-  {
-    name: 'InsideOut Heal',
-    icon: '🌿',
-    gradient: 'linear-gradient(135deg,#0a1a14,#0a3028)',
-    category: 'wellness',
-    tags: ['Flutter','iOS','Wellness'],
-    desc: 'Wellness and relaxation app with guided visualization, breathing exercises, and mindfulness sessions. Short daily sessions combining voice guidance, sound design, and focused attention.',
-    ios: 'https://apps.apple.com/us/app/insideout-heal/id6755116411',
-  },
-  {
-    name: 'FNMR — Fitness App',
-    icon: '🏃',
-    gradient: 'linear-gradient(135deg,#1a0a00,#3d1800)',
-    category: 'fitness',
-    tags: ['Flutter','iOS','Android','Fitness'],
-    desc: 'All-in-one fitness and wellness app with step tracking, distance monitoring, calorie tracking, guided workout videos, daily goals, and progress insights — for beginners and enthusiasts alike.',
-    ios: 'https://apps.apple.com/pk/app/fnmr-fitness-app/id6757791347',
-    android: 'https://play.google.com/store/apps/details?id=com.fantech.fnmr',
-  },
-  {
-    name: 'Montage Doku',
-    icon: '🏗️',
-    gradient: 'linear-gradient(135deg,#1a1600,#2e2800)',
-    category: 'enterprise',
-    tags: ['Flutter','iOS','Android','Enterprise'],
-    desc: 'Smart construction site documentation — digital workflows from tool handover to customer approval via digital signature. Offline-first, AI assistance, GPS tracking, voice notes with transcription.',
-    ios: 'https://apps.apple.com/pk/app/montage-doku/id6747742870',
-    android: 'https://play.google.com/store/apps/details?id=com.fantech.montageDoku',
-    upwork: 'https://www.upwork.com/freelancers/talhal4?p=2030013563081064448',
-  },
-  {
-    name: 'FixMix',
-    icon: '🔧',
-    gradient: 'linear-gradient(135deg,#1a0800,#3d1200)',
-    category: 'marketplace',
-    tags: ['Flutter','iOS','Marketplace'],
-    desc: 'Saudi-based home services marketplace. Users post jobs, vendors bid, chat, and make secure payments. Real-time bidding system, integrated payments, and Moyasar gateway. Includes admin panel.',
-    ios: 'https://apps.apple.com/pk/app/fixmix/id6746330396',
-    upwork: 'https://www.upwork.com/freelancers/talhal4?p=1981055375514472448',
-  },
-  {
-    name: 'Rel8.app',
-    icon: '👨‍👩‍👧',
-    gradient: 'linear-gradient(135deg,#0a1a2e,#0a2a4a)',
-    category: 'social',
-    tags: ['Flutter','iOS','Android','Social'],
-    desc: 'Family and care community platform for sharing real-time photos, videos, and wellness updates. Event updates, video calling, direct messaging, and secure document uploads for caregiving.',
-    ios: 'https://apps.apple.com/pk/app/rel8-app/id1596771971',
-    android: 'https://play.google.com/store/apps/details?id=com.rel8.app',
-  },
-  {
-    name: 'The Pulse App',
-    icon: '📍',
-    gradient: 'linear-gradient(135deg,#0a001a,#1a0038)',
-    category: 'social',
-    tags: ['Flutter','iOS','Android','Social'],
-    desc: 'Cross-platform local discovery app — events, restaurants, bars, and attractions. Trending experiences, reviews, personalized recommendations based on mood and location.',
-    ios: 'https://apps.apple.com/us/app/the-pulse-app/id6751578945',
-    android: 'https://play.google.com/store/apps/details?id=com.thepulseapp.app&pcampaignid=web_share',
-    upwork: 'https://www.upwork.com/freelancers/talhal4?p=2011115130704056320',
-  },
-  {
-    name: 'Pet AI',
-    icon: '🐾',
-    gradient: 'linear-gradient(135deg,#001a1a,#003838)',
-    category: 'health',
-    tags: ['Flutter','iOS','Android','Health'],
-    desc: 'AI health assistant for dog owners. Daily health insights, personalized tips, emergency alerts, and AI-powered chat. Track illnesses, intolerances, and receive region-specific emergency notifications.',
-    ios: 'https://apps.apple.com/us/app/pet-ai/id6752663608',
-    android: 'https://play.google.com/store/apps/details?id=com.teglax.petai',
-    upwork: 'https://www.upwork.com/freelancers/talhal4?p=2030194664797896704',
-  },
-  {
-    name: 'Hero Pain Tracking',
-    icon: '💊',
-    gradient: 'linear-gradient(135deg,#001428,#002848)',
-    category: 'health',
-    tags: ['Flutter','iOS','Health'],
-    desc: 'Wellness tool for monitoring heart rate, pain severity, pain location, and facial images. Built to support recovery and wellness tracking after head injuries or falls.',
-    ios: 'https://apps.apple.com/pk/app/hero-pain-tracking-app/id6447765801',
-  },
+═══════════════════════════════════════════ */
+const APPS = [
+  { name:'EQ9', icon:'💰', grad:'linear-gradient(135deg,#0a1628,#1f3a5c)', cat:'fintech', tags:['Flutter','iOS','Fintech','Web3'], desc:'Multi-chain crypto wallet — Ethereum, BNB, Polygon. Real-time swaps, scheduled recurring transactions, live charts, biometric auth. Built from scratch.', ios:'https://apps.apple.com/us/app/eq9/id6502989811', uw:'https://www.upwork.com/freelancers/talhal4?p=1954293260117250048' },
+  { name:'Dupely', icon:'🛍️', grad:'linear-gradient(135deg,#1a0800,#3d1000)', cat:'fintech', tags:['Flutter','iOS','Android','Fintech'], desc:'Price comparison app — scans thousands of listings to find the same product for less. Side-by-side price, review, and seller comparison.', ios:'https://apps.apple.com/us/app/dupely-find-it-for-less/id6755406950', and:'https://play.google.com/store/apps/details?id=com.dupely.dupelyapp' },
+  { name:'Home Appraised', icon:'🏠', grad:'linear-gradient(135deg,#0a1e0a,#0a3a20)', cat:'realestate', tags:['Flutter','iOS','Android','Real Estate'], desc:'Ontario homeowners upload photos and receive certified valuation reports online — no in-person visits. Full Flutter dev from concept to deployment.', ios:'https://apps.apple.com/pk/app/home-appraised/id6742306213', and:'https://play.google.com/store/apps/details?id=com.fantech.homeappraised.ai', uw:'https://www.upwork.com/freelancers/talhal4?p=1935780953714380800' },
+  { name:'Legal Direct', icon:'⚖️', grad:'linear-gradient(135deg,#080f20,#102040)', cat:'realestate', tags:['Flutter','iOS','Android','Real Estate'], desc:'Real estate legal platform for Ontario — mortgages, refinancing, buying/selling. Secure ID verification, milestone tracking, document sharing.', ios:'https://apps.apple.com/us/app/legal-direct/id6479345754', and:'https://play.google.com/store/apps/details?id=com.legaldirect.app' },
+  { name:'SpiritualYou', icon:'🧘', grad:'linear-gradient(135deg,#16082a,#2a0845)', cat:'wellness', tags:['Flutter','iOS','Android','Wellness'], desc:'Spiritual journey app — lucid dreaming, astral projection, meditation. AI-powered insights, binaural beats, mindfulness articles.', ios:'https://apps.apple.com/pk/app/spiritualyou-meditate-awaken/id6504926797', and:'https://play.google.com/store/apps/details?id=com.fantech.spiritualyou' },
+  { name:'InsideOut Heal', icon:'🌿', grad:'linear-gradient(135deg,#081814,#0a3028)', cat:'wellness', tags:['Flutter','iOS','Wellness'], desc:'Guided visualization, breathing exercises, and mindfulness sessions. Short daily sessions with voice guidance and layered sound design.', ios:'https://apps.apple.com/us/app/insideout-heal/id6755116411' },
+  { name:'FNMR Fitness', icon:'🏃', grad:'linear-gradient(135deg,#180800,#380e00)', cat:'fitness', tags:['Flutter','iOS','Android','Fitness'], desc:'All-in-one fitness app — step tracking, distance, calories, guided workout videos, daily goals, and progress insights for all levels.', ios:'https://apps.apple.com/pk/app/fnmr-fitness-app/id6757791347', and:'https://play.google.com/store/apps/details?id=com.fantech.fnmr' },
+  { name:'Montage Doku', icon:'🏗️', grad:'linear-gradient(135deg,#181400,#2e2800)', cat:'enterprise', tags:['Flutter','iOS','Android','Enterprise'], desc:'Smart construction documentation — offline-first, digital signatures, AI assistance, GPS tracking, voice notes with transcription, role-based accounts.', ios:'https://apps.apple.com/pk/app/montage-doku/id6747742870', and:'https://play.google.com/store/apps/details?id=com.fantech.montageDoku', uw:'https://www.upwork.com/freelancers/talhal4?p=2030013563081064448' },
+  { name:'FixMix', icon:'🔧', grad:'linear-gradient(135deg,#180600,#3a1000)', cat:'marketplace', tags:['Flutter','iOS','Marketplace'], desc:'Saudi home services marketplace — users post jobs, vendors bid, chat, and make secure payments. Real-time bidding, Moyasar payments, admin panel.', ios:'https://apps.apple.com/pk/app/fixmix/id6746330396', uw:'https://www.upwork.com/freelancers/talhal4?p=1981055375514472448' },
+  { name:'Rel8.app', icon:'👨‍👩‍👧', grad:'linear-gradient(135deg,#081828,#0a2848)', cat:'social', tags:['Flutter','iOS','Android','Social'], desc:'Family and care community — real-time photos, videos, wellness updates, video calling, direct messaging, secure document uploads.', ios:'https://apps.apple.com/pk/app/rel8-app/id1596771971', and:'https://play.google.com/store/apps/details?id=com.rel8.app' },
+  { name:'The Pulse App', icon:'📍', grad:'linear-gradient(135deg,#080018,#18003a)', cat:'social', tags:['Flutter','iOS','Android','Social'], desc:'Local discovery — events, restaurants, bars, attractions. Trending experiences, reviews, personalized recommendations by mood and location.', ios:'https://apps.apple.com/us/app/the-pulse-app/id6751578945', and:'https://play.google.com/store/apps/details?id=com.thepulseapp.app', uw:'https://www.upwork.com/freelancers/talhal4?p=2011115130704056320' },
+  { name:'Pet AI', icon:'🐾', grad:'linear-gradient(135deg,#001818,#003430)', cat:'health', tags:['Flutter','iOS','Android','Health'], desc:'AI health assistant for dogs — daily insights, AI-powered chat, emergency alerts, personalized care tips, illness tracking.', ios:'https://apps.apple.com/us/app/pet-ai/id6752663608', and:'https://play.google.com/store/apps/details?id=com.teglax.petai', uw:'https://www.upwork.com/freelancers/talhal4?p=2030194664797896704' },
+  { name:'Hero Pain Tracking', icon:'💊', grad:'linear-gradient(135deg,#001224,#002040)', cat:'health', tags:['Flutter','iOS','Health'], desc:'Wellness tool for monitoring heart rate, pain severity, pain location, and facial images after head injuries or falls.', ios:'https://apps.apple.com/pk/app/hero-pain-tracking-app/id6447765801' },
 ];
 
-const TAG_CLASS = {
-  'Flutter': 'tag-flutter', 'iOS': 'tag-ios', 'Android': 'tag-android',
-  'Fintech': 'tag-fintech', 'Web3': 'tag-fintech', 'Real Estate': 'tag-realestate',
-  'Wellness': 'tag-wellness', 'Fitness': 'tag-fitness', 'Social': 'tag-social',
-  'Enterprise': 'tag-enterprise', 'Marketplace': 'tag-marketplace', 'Health': 'tag-health',
-};
+const TAG_MAP = { 'Flutter':'tg-flutter','iOS':'tg-ios','Android':'tg-android','Fintech':'tg-fin','Web3':'tg-fin','Real Estate':'tg-re','Wellness':'tg-well','Fitness':'tg-fit','Social':'tg-soc','Enterprise':'tg-ent','Marketplace':'tg-mkt','Health':'tg-hlt' };
+const CATS = [['all','All (13)'],['fintech','Fintech'],['realestate','Real Estate'],['wellness','Wellness'],['fitness','Fitness'],['enterprise','Enterprise'],['social','Social'],['marketplace','Marketplace'],['health','Health']];
 
-function renderProjects() {
-  const grid = document.getElementById('projects-grid');
-  grid.innerHTML = PROJECTS.map(p => `
-    <div class="project-card reveal" data-category="${p.category}">
-      <div class="project-thumb" style="background:${p.gradient}">${p.icon}</div>
-      <div class="project-body">
-        <div class="project-tags">
-          ${p.tags.map(t => `<span class="tag ${TAG_CLASS[t]||''}">${t}</span>`).join('')}
-        </div>
-        <div class="project-name">${p.name}</div>
-        <p class="project-desc">${p.desc}</p>
-        <div class="project-links">
-          ${p.ios ? `<a href="${p.ios}" target="_blank" class="project-link">🍎 App Store</a>` : ''}
-          ${p.android ? `<a href="${p.android}" target="_blank" class="project-link android">▶ Play Store</a>` : ''}
-          ${p.upwork ? `<a href="${p.upwork}" target="_blank" class="project-link upwork">🟢 Case Study</a>` : ''}
-        </div>
-      </div>
-    </div>
-  `).join('');
-  // re-observe after render
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-}
-
-/* Filter logic */
-document.addEventListener('click', e => {
-  const btn = e.target.closest('.filter-btn');
-  if (!btn) return;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const f = btn.dataset.filter;
-  document.querySelectorAll('.project-card').forEach(card => {
-    if (f === 'all' || card.dataset.category === f) card.classList.remove('hidden');
-    else card.classList.add('hidden');
+// Build filter bar
+const fbar = document.getElementById('fbar');
+fbar.innerHTML = CATS.map(([v,l])=>`<button class="fb${v==='all'?' on':''}" data-f="${v}">${l}</button>`).join('');
+fbar.addEventListener('click', e => {
+  const btn = e.target.closest('.fb'); if (!btn) return;
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const f = btn.dataset.f;
+  document.querySelectorAll('.proj-card').forEach(c => {
+    c.classList.toggle('hidden', f !== 'all' && c.dataset.cat !== f);
   });
 });
 
-/* ══════════════════════════════════════
-   SCROLL REVEAL OBSERVER
-══════════════════════════════════════ */
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
-}, { threshold: 0.12 });
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+// Build project cards
+const track2 = document.getElementById('proj-track');
+track2.innerHTML = APPS.map(a => `
+  <div class="proj-card" data-cat="${a.cat}">
+    <div class="pc-thumb" style="background:${a.grad}">${a.icon}</div>
+    <div class="pc-body">
+      <div class="pc-tags">${a.tags.map(t=>`<span class="tg ${TAG_MAP[t]||''}">${t}</span>`).join('')}</div>
+      <div class="pc-name">${a.name}</div>
+      <p class="pc-desc">${a.desc}</p>
+      <div class="pc-links">
+        ${a.ios?`<a href="${a.ios}" target="_blank" class="pl">🍎 App Store</a>`:''}
+        ${a.and?`<a href="${a.and}" target="_blank" class="pl and">▶ Play Store</a>`:''}
+        ${a.uw?`<a href="${a.uw}" target="_blank" class="pl uw">🟢 Case Study</a>`:''}
+      </div>
+    </div>
+  </div>`).join('');
 
-renderProjects();
-
-/* ══════════════════════════════════════
-   BG PARTICLE FIELD
-══════════════════════════════════════ */
-(function() {
-  const canvas = document.getElementById('bg-canvas');
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.z = 30;
-
-  const count = 2000;
-  const geo = new THREE.BufferGeometry();
-  const pos = new Float32Array(count * 3);
-  const col = new Float32Array(count * 3);
-  for (let i = 0; i < count; i++) {
-    pos[i*3]   = (Math.random() - 0.5) * 90;
-    pos[i*3+1] = (Math.random() - 0.5) * 90;
-    pos[i*3+2] = (Math.random() - 0.5) * 70;
-    const r = Math.random();
-    if (r < 0.33) { col[i*3]=0.42; col[i*3+1]=0.39; col[i*3+2]=1; }
-    else if (r < 0.66) { col[i*3]=0; col[i*3+1]=0.83; col[i*3+2]=1; }
-    else { col[i*3]=1; col[i*3+1]=0.42; col[i*3+2]=0.62; }
-  }
-  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-  const mat = new THREE.PointsMaterial({ size: 0.1, vertexColors: true, transparent: true, opacity: 0.55 });
-  const points = new THREE.Points(geo, mat);
-  scene.add(points);
-
-  let mx = 0, my = 0;
-  window.addEventListener('mousemove', e => { mx = (e.clientX/window.innerWidth-.5)*2; my = -(e.clientY/window.innerHeight-.5)*2; });
-  window.addEventListener('resize', () => { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
-
-  let t = 0;
-  (function animate() {
-    requestAnimationFrame(animate); t += 0.002;
-    points.rotation.y = t*0.05 + mx*0.03;
-    points.rotation.x = t*0.02 + my*0.02;
-    renderer.render(scene, camera);
-  })();
-})();
-
-/* ══════════════════════════════════════
-   3D PHONE
-══════════════════════════════════════ */
-(function() {
-  const canvas = document.getElementById('phone-canvas');
-  const W = canvas.offsetWidth || 320, H = canvas.offsetHeight || 480;
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(W, H);
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(40, W/H, 0.1, 100);
-  camera.position.z = 5;
-
-  scene.add(new THREE.AmbientLight(0xffffff, 0.3));
-  const key = new THREE.DirectionalLight(0x6c63ff, 2.5); key.position.set(3,3,3); scene.add(key);
-  const fill = new THREE.DirectionalLight(0x00d4ff, 1.2); fill.position.set(-3,-1,2); scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xff6b9d, 0.8); rim.position.set(0,-4,-2); scene.add(rim);
-
-  const phoneMat = new THREE.MeshPhysicalMaterial({ color: 0x0a0a1e, metalness: 0.85, roughness: 0.08, reflectivity: 1, clearcoat: 1 });
-  const phone = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.4, 0.1), phoneMat);
-  scene.add(phone);
-
-  // Screen texture
-  const tc = document.createElement('canvas'); tc.width = 256; tc.height = 512;
-  const ctx = tc.getContext('2d');
-  const g = ctx.createLinearGradient(0,0,0,512);
-  g.addColorStop(0,'#0a0a24'); g.addColorStop(1,'#050516');
-  ctx.fillStyle = g; ctx.fillRect(0,0,256,512);
-  // Grid lines (UI skeleton)
-  ctx.strokeStyle = 'rgba(108,99,255,0.15)'; ctx.lineWidth = 1;
-  for (let i = 0; i < 8; i++) { ctx.beginPath(); ctx.moveTo(0,64+i*55); ctx.lineTo(256,64+i*55); ctx.stroke(); }
-  // App icon grid
-  const icons = ['💰','🏠','⚖️','🧘','🏃','🏗️','🔧','👨‍👩‍👧','📍','🐾','💊','🛍️','🌿'];
-  const colors2 = ['#6c63ff','#00d4ff','#00b48c','#c864ff','#ff8c00','#ffdc64','#ff6464','#ff6b9d','#6c63ff','#64c8ff','#00d4ff','#ffc832','#6fff6f'];
-  icons.forEach((ic, i) => {
-    const c = i % 3, r = Math.floor(i / 3);
-    const x = 20 + c * 75, y = 70 + r * 80;
-    ctx.fillStyle = colors2[i]+'22'; ctx.beginPath(); ctx.roundRect(x,y,55,55,14); ctx.fill();
-    ctx.font='24px serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(ic, x+27, y+28);
+// 3D card tilt
+document.querySelectorAll('.proj-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    card.style.transform = `perspective(800px) rotateX(${-y*10}deg) rotateY(${x*10}deg) translateZ(16px)`;
   });
-  // Status bar
-  ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(0,0,256,28);
-  ctx.fillStyle = '#fff'; ctx.font = '11px sans-serif'; ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText('9:41',8,14);
-  ctx.textAlign='right'; ctx.fillText('●●● ▮',248,14);
-  // Accent glow
-  const gg = ctx.createRadialGradient(128,480,0,128,480,200);
-  gg.addColorStop(0,'rgba(108,99,255,0.25)'); gg.addColorStop(1,'transparent');
-  ctx.fillStyle = gg; ctx.fillRect(0,0,256,512);
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+});
 
-  const screenMat = new THREE.MeshPhysicalMaterial({ map: new THREE.CanvasTexture(tc), metalness: 0, roughness: 0.04, clearcoat: 1, emissive: new THREE.Color(0x08081e), emissiveIntensity: 0.5 });
-  const screen = new THREE.Mesh(new THREE.BoxGeometry(1.0, 2.0, 0.01), screenMat);
-  screen.position.z = 0.056; phone.add(screen);
 
-  // Camera bump
-  const cb = new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,0.035,32), new THREE.MeshPhysicalMaterial({color:0x111133,metalness:0.9,roughness:0.05}));
-  cb.rotation.x = Math.PI/2; cb.position.set(0.35,0.9,-0.07); phone.add(cb);
+/* ═══════════════════════════════════════════
+   COUNTER ANIMATION
+═══════════════════════════════════════════ */
+function animCount(el, target) {
+  let v = 0; const step = target / 50;
+  const t = setInterval(() => { v = Math.min(v+step, target); el.textContent = Math.floor(v)+(target===4?'+':''); if(v>=target) clearInterval(t); }, 20);
+}
 
-  // Glow ring
-  const ring = new THREE.Mesh(new THREE.RingGeometry(1.3,1.52,64), new THREE.MeshBasicMaterial({color:0x6c63ff,side:THREE.DoubleSide,transparent:true,opacity:0.07}));
-  scene.add(ring);
-  const ring2 = new THREE.Mesh(new THREE.RingGeometry(1.6,1.78,64), new THREE.MeshBasicMaterial({color:0x00d4ff,side:THREE.DoubleSide,transparent:true,opacity:0.04}));
-  scene.add(ring2);
-
-  let tx = 0, ty = 0;
-  document.addEventListener('mousemove', e => { tx=(e.clientX/window.innerWidth-.5)*.7; ty=-(e.clientY/window.innerHeight-.5)*.7; });
-  let t = 0;
-  (function animate() {
-    requestAnimationFrame(animate); t += 0.01;
-    phone.rotation.y += (tx - phone.rotation.y) * 0.05;
-    phone.rotation.x += (ty - phone.rotation.x) * 0.05;
-    phone.position.y = Math.sin(t*.7)*.08;
-    ring.rotation.z = t*.25; ring2.rotation.z = -t*.18;
-    renderer.render(scene, camera);
-  })();
-})();
-
-/* ══════════════════════════════════════
-   3D ORB (About)
-══════════════════════════════════════ */
-(function() {
-  const canvas = document.getElementById('cube-canvas');
-  const W = canvas.offsetWidth || 280, H = canvas.offsetHeight || 280;
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(W, H);
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(40, W/H, 0.1, 100);
-  camera.position.z = 5;
-
-  scene.add(new THREE.AmbientLight(0xffffff, 0.35));
-  const l1 = new THREE.DirectionalLight(0x6c63ff, 2.2); l1.position.set(2,2,2); scene.add(l1);
-  const l2 = new THREE.DirectionalLight(0x00d4ff, 1.6); l2.position.set(-2,-1,2); scene.add(l2);
-
-  const geo = new THREE.IcosahedronGeometry(1.3, 1);
-  const mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({color:0x6c63ff,metalness:0.5,roughness:0.15,transparent:true,opacity:0.12}));
-  scene.add(mesh);
-  const wire = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color:0x6c63ff,wireframe:true,transparent:true,opacity:0.45}));
-  scene.add(wire);
-
-  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.65,32,32), new THREE.MeshPhysicalMaterial({color:0x00d4ff,metalness:0.92,roughness:0.0,transparent:true,opacity:0.72,emissive:new THREE.Color(0x002d44),emissiveIntensity:0.6}));
-  scene.add(sphere);
-
-  [[Math.PI/2,0,0x6c63ff],[Math.PI/4,Math.PI/4,0x00d4ff],[-Math.PI/4,Math.PI/3,0xff6b9d]].forEach(([rx,ry,col])=>{
-    const r = new THREE.Mesh(new THREE.RingGeometry(1.55,1.6,64),new THREE.MeshBasicMaterial({color:col,side:THREE.DoubleSide,transparent:true,opacity:0.38}));
-    r.rotation.x=rx; r.rotation.y=ry; scene.add(r);
-    r._spd = (Math.random()-.5)*.015;
-    r._base = { rx, ry };
-  });
-
-  let t = 0;
-  (function animate() {
-    requestAnimationFrame(animate); t += 0.008;
-    mesh.rotation.x = t*.5; mesh.rotation.y = t*.7;
-    wire.rotation.x = t*.5; wire.rotation.y = t*.7;
-    sphere.rotation.y = t;
-    scene.children.filter(c=>c.geometry&&c.geometry.type==='RingGeometry').forEach((r,i)=>{
-      r.rotation.z = t * [.55,-.38,.28][i];
+/* ═══════════════════════════════════════════
+   SCROLL REVEAL + COUNTERS
+═══════════════════════════════════════════ */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    io.unobserve(e.target);
+    // counters
+    e.target.querySelectorAll('[data-count]').forEach(el => {
+      animCount(el, +el.dataset.count);
     });
-    renderer.render(scene, camera);
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+/* ═══════════════════════════════════════════
+   THREE.JS — HERO SCENE
+   One large phone, perfectly centered, high-res screen.
+   Background glow planes + floating orbs + particles.
+   Nothing clips. Fully responsive.
+═══════════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('hero-canvas');
+  const getW = () => window.innerWidth  || 800;
+  const getH = () => window.innerHeight || 600;
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(getW(), getH());
+
+  const scene = new THREE.Scene();
+  // Wider FOV + more depth — fills the full-width canvas
+  const cam = new THREE.PerspectiveCamera(68, getW()/getH(), 0.1, 100);
+  cam.position.z = 6;
+
+  // Lights — point lights for rich reflections
+  scene.add(new THREE.AmbientLight(0xffffff, 0.18));
+  const kl = new THREE.PointLight(0x7b2fff, 7, 14); kl.position.set( 0.5, 2.5, 3); scene.add(kl);
+  const fl = new THREE.PointLight(0x00e5ff, 5, 12); fl.position.set( 3.5,-1.0, 2); scene.add(fl);
+  const rl = new THREE.PointLight(0xff3d7f, 3,  9); rl.position.set( 0.5,-3.0, 1); scene.add(rl);
+  const tl = new THREE.PointLight(0xffffff,1.5, 8); tl.position.set( 2,   4,   4); scene.add(tl);
+  // Left-side accent light so the text area has some glow too
+  const ll = new THREE.PointLight(0x7b2fff, 2, 16); ll.position.set(-5, 0, 2); scene.add(ll);
+
+  // ── HIGH-RES screen texture (512×1024) ──
+  const maxAniso = renderer.capabilities.getMaxAnisotropy();
+  function makeScreen(appName, appCat, accent, emoji) {
+    const accentColor = accent;
+    const c = document.createElement('canvas'); c.width=512; c.height=1024;
+    const W=512,H=1024; const ctx=c.getContext('2d');
+    ctx.fillStyle='#07061c'; ctx.fillRect(0,0,W,H);
+    const g1=ctx.createRadialGradient(W*.5,H*.42,0,W*.5,H*.42,W*.8);
+    g1.addColorStop(0,accentColor+'42'); g1.addColorStop(.5,accentColor+'18'); g1.addColorStop(1,'transparent');
+    ctx.fillStyle=g1; ctx.fillRect(0,0,W,H);
+    // dynamic island
+    ctx.fillStyle='#020212'; ctx.beginPath(); ctx.roundRect(W/2-72,20,144,44,22); ctx.fill();
+    ctx.fillStyle=accentColor+'90'; ctx.beginPath(); ctx.arc(W/2+48,42,10,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=accentColor+'28'; ctx.beginPath(); ctx.arc(W/2+48,42,17,0,Math.PI*2); ctx.fill();
+    // status
+    ctx.fillStyle='rgba(255,255,255,.55)'; ctx.font='bold 26px Inter,sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText('9:41',26,42);
+    ctx.font='24px Inter,sans-serif'; ctx.textAlign='right'; ctx.fillText('⚡ 87%',W-26,42);
+    // emoji with glow
+    ctx.shadowColor=accentColor; ctx.shadowBlur=60;
+    ctx.font='118px serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(emoji,W/2,H*.37);
+    ctx.shadowBlur=0;
+    // app name
+    const dn=appName.length>11?appName.slice(0,11)+'…':appName;
+    ctx.fillStyle='rgba(255,255,255,.95)'; ctx.font='bold 56px Space Grotesk,sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(dn,W/2,H*.525);
+    // category pill
+    ctx.fillStyle=accentColor+'1e'; ctx.strokeStyle=accentColor+'60'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.roundRect(W/2-98,H*.572,196,48,24); ctx.fill(); ctx.stroke();
+    ctx.fillStyle=accentColor; ctx.font='600 23px Inter,sans-serif'; ctx.fillText(appCat,W/2,H*.596);
+    // store row
+    const ds=(label,x,w)=>{ctx.fillStyle='rgba(255,255,255,.07)';ctx.beginPath();ctx.roundRect(x,H*.658,w,48,12);ctx.fill();ctx.fillStyle='rgba(255,255,255,.6)';ctx.font='21px sans-serif';ctx.fillText(label,x+w/2,H*.683);};
+    ds('🍎 App Store',34,W/2-50); ds('▶ Play Store',W/2+16,W/2-50);
+    ctx.fillStyle='rgba(255,255,255,.04)'; ctx.fillRect(34,H*.645,W-68,1);
+    // home bar
+    ctx.fillStyle='rgba(255,255,255,.22)'; ctx.beginPath(); ctx.roundRect(W/2-72,H-30,144,5,2.5); ctx.fill();
+    const tex=new THREE.CanvasTexture(c);
+    tex.anisotropy=maxAniso; tex.minFilter=tex.magFilter=THREE.LinearFilter;
+    return tex;
+  }
+
+  const appData = [
+    {name:'EQ9',cat:'Crypto Wallet',color:'#ffc832',emoji:'💰'},
+    {name:'SpiritualYou',cat:'Meditation',color:'#c864ff',emoji:'🧘'},
+    {name:'Home Appraised',cat:'Real Estate',color:'#00c896',emoji:'🏠'},
+    {name:'FNMR',cat:'Fitness',color:'#ff8c00',emoji:'🏃'},
+    {name:'Legal Direct',cat:'Legal Platform',color:'#00e5ff',emoji:'⚖️'},
+    {name:'FixMix',cat:'Marketplace',color:'#ff6464',emoji:'🔧'},
+    {name:'Pet AI',cat:'Pet Health',color:'#64c8ff',emoji:'🐾'},
+    {name:'Montage Doku',cat:'Construction',color:'#ffdc50',emoji:'🏗️'},
+    {name:'Dupely',cat:'Price Compare',color:'#9d6fff',emoji:'🛍️'},
+    {name:'The Pulse App',cat:'Local Discovery',color:'#ff3d7f',emoji:'📍'},
+    {name:'Rel8.app',cat:'Family & Care',color:'#7b9fff',emoji:'👨‍👩‍👧'},
+    {name:'InsideOut Heal',cat:'Wellness',color:'#00e5a0',emoji:'🌿'},
+    {name:'Hero Pain',cat:'Health Tracking',color:'#64c8ff',emoji:'💊'},
+  ];
+
+  // ── Phone mesh ──
+  const bodyMat  = new THREE.MeshPhysicalMaterial({color:0x06051a,metalness:.92,roughness:.04,clearcoat:1,clearcoatRoughness:.02});
+  const initTex  = makeScreen(appData[0].name,appData[0].cat,appData[0].color,appData[0].emoji);
+  const screenMat= new THREE.MeshPhysicalMaterial({map:initTex,roughness:.01,clearcoat:1,emissive:new THREE.Color(0x04031a),emissiveIntensity:.65});
+
+  const pg=new THREE.Group();
+  pg.add(new THREE.Mesh(new THREE.BoxGeometry(1.32,2.64,0.13),bodyMat));
+  const scrMesh=new THREE.Mesh(new THREE.BoxGeometry(1.12,2.24,0.01),screenMat);
+  scrMesh.position.z=0.066; pg.add(scrMesh);
+  const isle=new THREE.Mesh(new THREE.BoxGeometry(0.36,0.082,0.016),new THREE.MeshBasicMaterial({color:0x010210}));
+  isle.position.set(0,1.06,0.068); pg.add(isle);
+  const hBar=new THREE.Mesh(new THREE.BoxGeometry(0.46,0.045,0.01),new THREE.MeshBasicMaterial({color:0x1c1a48,transparent:true,opacity:.6}));
+  hBar.position.set(0,-1.18,0.065); pg.add(hBar);
+  const cBump=new THREE.Mesh(new THREE.CylinderGeometry(.082,.082,.04,28),new THREE.MeshPhysicalMaterial({color:0x0c0b28,metalness:.95,roughness:.04}));
+  cBump.rotation.x=Math.PI/2; cBump.position.set(.4,1.0,-.085); pg.add(cBump);
+  // Phone sits in the right half — centered between text edge and canvas edge
+  pg.rotation.y = 0.1;
+  scene.add(pg);
+
+  function updatePhoneX() {
+    pg.position.x = window.innerWidth < 900 ? 0.4 : 2.4;
+  }
+  updatePhoneX();
+  window.addEventListener('resize', updatePhoneX);
+
+  let curApp=0;
+  setInterval(()=>{
+    curApp=(curApp+1)%appData.length;
+    const d=appData[curApp];
+    screenMat.map=makeScreen(d.name,d.cat,d.color,d.emoji);
+    screenMat.needsUpdate=true;
+  },2600);
+
+  // ── Floating badge cards (fill right side of canvas) ──
+  function makeBadge(icon, label, value, accent) {
+    const c = document.createElement('canvas'); c.width=320; c.height=160;
+    const ctx = c.getContext('2d'), W=320, H=160;
+    // glass background
+    ctx.fillStyle='rgba(10,8,28,0.82)';
+    ctx.beginPath(); ctx.roundRect(0,0,W,H,20); ctx.fill();
+    // border
+    ctx.strokeStyle=accent+'70'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.roundRect(1,1,W-2,H-2,20); ctx.stroke();
+    // inner glow
+    const g=ctx.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,W*.6);
+    g.addColorStop(0,accent+'28'); g.addColorStop(1,'transparent');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    // icon circle
+    ctx.fillStyle=accent+'22'; ctx.beginPath(); ctx.arc(54,H/2,30,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=accent+'44'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(54,H/2,30,0,Math.PI*2); ctx.stroke();
+    ctx.font='32px serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(icon,54,H/2);
+    // value
+    ctx.fillStyle='rgba(255,255,255,.95)'; ctx.font='bold 42px Space Grotesk,sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText(value,100,H*.42);
+    // label
+    ctx.fillStyle=accent; ctx.font='500 22px Inter,sans-serif'; ctx.fillText(label,100,H*.74);
+    const tex=new THREE.CanvasTexture(c);
+    tex.minFilter=tex.magFilter=THREE.LinearFilter; return tex;
+  }
+
+  // Badge 1 — top right of phone
+  const b1=new THREE.Mesh(new THREE.PlaneGeometry(1.5,0.75),
+    new THREE.MeshBasicMaterial({map:makeBadge('⭐','Avg Rating','4.8','#ffc832'),transparent:true,opacity:.93,depthWrite:false,side:THREE.DoubleSide}));
+  b1.position.set(3.7,1.15,-1.8); b1.rotation.y=-0.25; scene.add(b1);
+
+  // Badge 2 — bottom right of phone
+  const b2=new THREE.Mesh(new THREE.PlaneGeometry(1.5,0.75),
+    new THREE.MeshBasicMaterial({map:makeBadge('📱','Apps Shipped','13+','#00e5ff'),transparent:true,opacity:.93,depthWrite:false,side:THREE.DoubleSide}));
+  b2.position.set(3.8,-0.7,-1.8); b2.rotation.y=-0.2; scene.add(b2);
+
+  // Badge 3 — mid-right accent
+  const b3=new THREE.Mesh(new THREE.PlaneGeometry(1.3,0.65),
+    new THREE.MeshBasicMaterial({map:makeBadge('🚀','Experience','4+ Yrs','#ff3d7f'),transparent:true,opacity:.88,depthWrite:false,side:THREE.DoubleSide}));
+  b3.position.set(3.6,0.25,-2.0); b3.rotation.y=-0.22; scene.add(b3);
+
+  // ── Atmospheric glow planes — span the FULL canvas ──
+  function radGlow(hex,a='55'){
+    const c=document.createElement('canvas'); c.width=512; c.height=512;
+    const ctx=c.getContext('2d'),g=ctx.createRadialGradient(256,256,0,256,256,256);
+    g.addColorStop(0,hex+a); g.addColorStop(.45,hex+'18'); g.addColorStop(1,'transparent');
+    ctx.fillStyle=g; ctx.fillRect(0,0,512,512);
+    const t=new THREE.CanvasTexture(c); t.minFilter=THREE.LinearFilter; return t;
+  }
+  const mkGP=(tex,sz,x,y,z,op)=>{
+    const m=new THREE.Mesh(new THREE.PlaneGeometry(sz,sz),new THREE.MeshBasicMaterial({map:tex,transparent:true,opacity:op,depthWrite:false}));
+    m.position.set(x,y,z); scene.add(m); return m;
+  };
+  // Right glow — centered on the phone (x≈2.4)
+  const gP=mkGP(radGlow('#7b2fff'), 9,  2.4,  0,  -2.0, 1.0);
+  const gC=mkGP(radGlow('#00e5ff'), 6,  3.2, -1.2,-2.5, 0.7);
+  // Far-right fill glow (visible with FOV=68, x=4.0 is within frustum)
+  const gR=mkGP(radGlow('#c864ff'), 6,  4.0,  0.5,-3.0, 0.55);
+  // Left-side glows behind text
+  const gL=mkGP(radGlow('#7b2fff'), 8, -3.2,  0.5,-2.5, 0.5);
+  const gK=mkGP(radGlow('#ff3d7f'), 5, -1.2, -1.5,-3.0, 0.4);
+  const gM=mkGP(radGlow('#00e5ff'), 4,  0.2,  2.0,-3.0, 0.3);
+
+  // ── Orbs: ring around phone (x≈2.4) + scattered left + far edges ──
+  const orbCfg=[
+    {x: 3.8, y: 1.6, z:.5, c:0xffc832},   // top-right of phone
+    {x: 0.8, y: 1.6, z:.4, c:0xc864ff},   // top-left of phone
+    {x: 4.0, y:-0.2, z:.6, c:0x00c896},   // right of phone
+    {x: 0.6, y:-0.6, z:.4, c:0xff8c00},   // left of phone
+    {x: 3.5, y:-1.7, z:.4, c:0xff6464},   // bottom-right
+    {x: 1.0, y:-1.9, z:.5, c:0x00e5a0},   // bottom-left
+    {x: 2.4, y: 2.4, z:.3, c:0xff3d7f},   // top-center (above phone)
+    {x:-2.8, y: 0.8, z:.3, c:0x64c8ff},   // far left (behind text)
+    {x:-3.8, y:-0.5, z:.2, c:0xc864ff},   // far left edge
+    {x: 4.5, y: 0.8, z:.3, c:0x00e5ff},   // far right edge fill
+  ];
+  const orbs=orbCfg.map(d=>{
+    const m=new THREE.Mesh(new THREE.SphereGeometry(.095,20,20),
+      new THREE.MeshPhysicalMaterial({color:d.c,emissive:new THREE.Color(d.c),emissiveIntensity:1.3,metalness:.1,roughness:.1,transparent:true,opacity:.88}));
+    m.position.set(d.x,d.y,d.z); m._ox=d.x; m._oy=d.y; scene.add(m); return m;
+  });
+
+  // ── Particles ──
+  const pN=900,pG=new THREE.BufferGeometry();
+  const pP=new Float32Array(pN*3),pC=new Float32Array(pN*3);
+  for(let i=0;i<pN;i++){
+    pP[i*3]=(Math.random()-.5)*14; pP[i*3+1]=(Math.random()-.5)*14; pP[i*3+2]=(Math.random()-.5)*8-2;
+    const r=Math.random();
+    if(r<.33){pC[i*3]=.48;pC[i*3+1]=.18;pC[i*3+2]=1;}
+    else if(r<.66){pC[i*3]=0;pC[i*3+1]=.9;pC[i*3+2]=1;}
+    else{pC[i*3]=1;pC[i*3+1]=.24;pC[i*3+2]=.5;}
+  }
+  pG.setAttribute('position',new THREE.BufferAttribute(pP,3));
+  pG.setAttribute('color',new THREE.BufferAttribute(pC,3));
+  const particles=new THREE.Points(pG,new THREE.PointsMaterial({size:.055,vertexColors:true,transparent:true,opacity:.38}));
+  scene.add(particles);
+
+  let mx=0,my=0;
+  window.addEventListener('mousemove',e=>{ mx=(e.clientX/innerWidth-.5)*2; my=-(e.clientY/innerHeight-.5)*2; });
+  window.addEventListener('resize',()=>{ const W2=getW(),H2=getH(); cam.aspect=W2/H2; cam.updateProjectionMatrix(); renderer.setSize(W2,H2); });
+
+  let t=0;
+  (function animate(){
+    requestAnimationFrame(animate); t+=0.01;
+    pg.rotation.y+=(mx*.13+0.1-pg.rotation.y)*.05;
+    pg.rotation.x+=(my*.065-pg.rotation.x)*.05;
+    pg.position.y=Math.sin(t*.65)*.1;
+    orbs.forEach((o,i)=>{
+      o.position.y=o._oy+Math.sin(t*.5+i*1.1)*.16;
+      o.position.x=o._ox+Math.cos(t*.35+i*.9)*.09;
+      o.scale.setScalar(1+Math.sin(t*1.1+i*.8)*.12);
+    });
+    gP.rotation.z=t*.018; gC.rotation.z=-t*.014; gL.rotation.z=-t*.012; gK.rotation.z=t*.01; gM.rotation.z=t*.008;
+    // Float the badge cards
+    b1.position.y=1.15+Math.sin(t*.72+0.4)*.09;
+    b2.position.y=-0.7+Math.sin(t*.65+2.1)*.09;
+    b3.position.y=0.25+Math.sin(t*.58+1.2)*.08;
+    particles.rotation.y=t*.005;
+    renderer.render(scene,cam);
+  })();
+})();
+
+/* ═══════════════════════════════════════════
+   THREE.JS — ORB (About)
+═══════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('orb-canvas');
+  const W=canvas.offsetWidth||260, H=canvas.offsetHeight||260;
+  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(W,H);
+  const scene=new THREE.Scene(), cam=new THREE.PerspectiveCamera(40,W/H,.1,100);
+  cam.position.z=5;
+  scene.add(new THREE.AmbientLight(0xffffff,.3));
+  const l1=new THREE.DirectionalLight(0x7b2fff,2.5); l1.position.set(2,2,2); scene.add(l1);
+  const l2=new THREE.DirectionalLight(0x00e5ff,1.8); l2.position.set(-2,-1,2); scene.add(l2);
+  const geo=new THREE.IcosahedronGeometry(1.3,1);
+  scene.add(new THREE.Mesh(geo,new THREE.MeshPhysicalMaterial({color:0x7b2fff,metalness:.5,roughness:.15,transparent:true,opacity:.1})));
+  scene.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0x7b2fff,wireframe:true,transparent:true,opacity:.4})));
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(.62,32,32),new THREE.MeshPhysicalMaterial({color:0x00e5ff,metalness:.92,roughness:0,transparent:true,opacity:.7,emissive:new THREE.Color(0x003344),emissiveIntensity:.6})));
+  const rings=[[Math.PI/2,0,0x7b2fff],[Math.PI/4,Math.PI/4,0x00e5ff],[-Math.PI/4,Math.PI/3,0xff3d7f]].map(([rx,ry,col])=>{
+    const r=new THREE.Mesh(new THREE.RingGeometry(1.52,1.58,64),new THREE.MeshBasicMaterial({color:col,side:THREE.DoubleSide,transparent:true,opacity:.38}));
+    r.rotation.x=rx; r.rotation.y=ry; scene.add(r); return r;
+  });
+  let t=0;
+  (function animate(){requestAnimationFrame(animate);t+=.009;
+    scene.children[1].rotation.x=t*.5; scene.children[1].rotation.y=t*.7;
+    scene.children[2].rotation.x=t*.5; scene.children[2].rotation.y=t*.7;
+    rings.forEach((r,i)=>{r.rotation.z=t*[.55,-.38,.28][i];});
+    renderer.render(scene,cam);
   })();
 })();
 </script>
