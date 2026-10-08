@@ -1,0 +1,65 @@
+# Talha Latif
+
+> Flutter developer and mobile app engineer. Lead Frontend Engineer at Dupely. 4+ years building production iOS and Android apps, with 13 live on the App Store and Google Play across fintech, Web3, real estate, health, wellness and enterprise.
+
+- Website: https://mr-talha110.github.io/
+- Email: talhalatif636@gmail.com
+- LinkedIn: https://www.linkedin.com/in/talha-latif/
+- GitHub: https://github.com/mr-talha110
+- Upwork: https://www.upwork.com/freelancers/talhal4
+- Location: Pakistan (works remotely with international teams)
+- Education: BS Computer Science, University of Okara
+- Availability: open to full-time roles and selected freelance/contract projects
+
+## Experience
+
+- Lead Frontend Engineer, Dupely (https://dupely.io/), Feb 2026 to present. Leads frontend across mobile apps and browser extension; feature design and code review, QA and performance; mentoring and coding standards.
+- Mobile Engineer (Flutter), Fantech Labs (https://fantechlabs.ca/), Sep 2023 to Mar 2026. Built the EQ9 multi-chain crypto wallet; architected Home Appraised and Legal Direct; delivered SpiritualYou, FNMR, Rel8.app and Stark Montage App.
+- Mobile Engineer (Flutter), Teglax (https://teglax.com/), Dec 2021 to Sep 2023. Lead developer on FixMix and Pet AI (now Dog Pregnancy Calculator); REST and GraphQL integrations.
+
+## Apps (all live)
+
+- **EQ9** (Fintech & Web3): Multi-chain crypto wallet for Ethereum, BNB and Polygon with real-time swaps, scheduled recurring transactions, live charts and biometric auth. [App Store](https://apps.apple.com/us/app/eq9/id6502989811)
+- **Dupely** (Shopping): Price comparison that scans thousands of listings to find the same product for less, with side-by-side price, review and seller comparison. [App Store](https://apps.apple.com/us/app/dupely-find-it-for-less/id6755406950) | [Google Play](https://play.google.com/store/apps/details?id=com.dupely.dupelyapp)
+- **Home Appraised** (Real Estate): Ontario homeowners upload photos and receive certified valuation reports online, with no in-person visit needed. Built end to end. [App Store](https://apps.apple.com/ca/app/home-appraised/id6742306213) | [Google Play](https://play.google.com/store/apps/details?id=com.fantech.homeappraised.ai)
+- **Legal Direct** (Real Estate): Real estate legal platform for Ontario covering mortgages, refinancing and buying or selling, with ID verification, milestone tracking and document sharing. [App Store](https://apps.apple.com/ca/app/legal-direct/id6479345754) | [Google Play](https://play.google.com/store/apps/details?id=com.legaldirect.app)
+- **Stark Montage App** (Enterprise): Construction documentation for field teams: offline-first, digital signatures, GPS tracking, voice notes with transcription and role-based accounts. [App Store](https://apps.apple.com/app/id6747742870) | [Google Play](https://play.google.com/store/apps/details?id=com.fantech.montageDoku)
+- **FixMix** (Marketplace): Saudi home-services marketplace where users post jobs and vendors bid, chat and get paid. Real-time bidding, Moyasar payments and an admin panel. [App Store](https://apps.apple.com/app/id6746330396)
+- **SpiritualYou** (Wellness): Meditation and spiritual-growth app with AI-powered insights, binaural beats, guided practices and mindfulness articles. [App Store](https://apps.apple.com/us/app/spiritualyou-meditate-awaken/id6504926797) | [Google Play](https://play.google.com/store/apps/details?id=com.fantech.spiritualyou)
+- **InsideOut Heal** (Wellness): Short daily sessions of guided visualisation and breathing, with voice guidance and layered sound design. [App Store](https://apps.apple.com/us/app/insideout-heal/id6755116411)
+- **FNMR Fitness** (Fitness): All-in-one fitness: step, distance and calorie tracking, guided workout videos, daily goals and progress insights. [App Store](https://apps.apple.com/us/app/fnmr-fitness-app/id6757791347) | [Google Play](https://play.google.com/store/apps/details?id=com.fantech.fnmr)
+- **Rel8.app** (Social): Family and care community with real-time photo and video updates, video calling, direct messaging and secure document uploads. [App Store](https://apps.apple.com/us/app/rel8-app/id1596771971) | [Google Play](https://play.google.com/store/apps/details?id=com.rel8.app)
+- **The Pulse App** (Social): Local discovery for events, restaurants, bars and attractions, with reviews and recommendations tuned to mood and location. [App Store](https://apps.apple.com/us/app/the-pulse-app/id6751578945) | [Google Play](https://play.google.com/store/apps/details?id=com.thepulseapp.app)
+- **Dog Pregnancy Calculator** (Health): Dog health and pregnancy companion (formerly Pet AI) with a whelping date calculator, an automatic reminder calendar for vet visits and vaccinations, and health tracking. [App Store](https://apps.apple.com/us/app/id6752663608) | [Google Play](https://play.google.com/store/apps/details?id=com.teglax.petai)
+- **Hero Pain Tracking** (Health): Clinical wellness tool for tracking heart rate, pain severity and location, and facial images after head injuries or falls. [App Store](https://apps.apple.com/us/app/hero-pain-tracking-app/id6447765801)
+
+## Skills
+
+- Mobile: Flutter, Dart, iOS/Swift, Android/Kotlin
+- Architecture and state: Clean Architecture, BLoC, Riverpod, GetX, Provider
+- Backend and cloud: Firebase, Supabase, REST, GraphQL, AWS S3 and CloudFront
+- Web3: Ethereum, Polygon, BNB Chain, Uniswap SDK, smart contracts
+- Security and payments: biometric auth, passkeys, RBAC, ID verification, Moyasar
+- Features and delivery: real-time chat, offline sync, push notifications, AI integration, CI/CD, App Store and Play Store releases
+
+## FAQ
+
+### Who is Talha Latif?
+
+Talha Latif is a Flutter developer and mobile app engineer based in Pakistan who works remotely with international teams. He is currently Lead Frontend Engineer at Dupely and has 4+ years of experience building production iOS and Android apps, 13 of which are live on the App Store and Google Play.
+
+### What apps has Talha Latif built?
+
+His published apps include EQ9, Dupely, Home Appraised, Legal Direct, Stark Montage App, FixMix, SpiritualYou, InsideOut Heal, FNMR Fitness, Rel8.app, The Pulse App, Dog Pregnancy Calculator and Hero Pain Tracking. They span fintech and Web3, real estate, health, wellness, fitness, social, marketplace and enterprise software.
+
+### What technologies does Talha Latif specialise in?
+
+Flutter and Dart for cross-platform iOS and Android apps, with BLoC, Riverpod, GetX and Provider for state management. He also works with Firebase, Supabase, REST and GraphQL APIs, AWS, Web3 (Ethereum, Polygon, BNB Chain, Uniswap SDK), biometric authentication, passkeys, offline sync and real-time chat.
+
+### Has Talha Latif built crypto or Web3 apps?
+
+Yes. He built EQ9, a multi-chain crypto wallet for Ethereum, BNB Chain and Polygon with real-time swaps, scheduled recurring transactions, live charts and biometric authentication, from scratch through App Store release.
+
+### Is Talha Latif available for hire?
+
+Yes. He is open to full-time roles and selected freelance or contract projects. You can reach him at talhalatif636@gmail.com or hire him on Upwork.
